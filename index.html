@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover" name="viewport"/>
-  <title>Brick Ball — 70 Levels | High Speed + Ads</title>
+  <title>Brick Ball — 70 Levels | High Paddle + Network Error</title>
   <style>
     * {
       -webkit-user-select: none;
@@ -176,7 +176,8 @@
 
     .reward-card,
     .gameover-card,
-    .levelcomplete-card {
+    .levelcomplete-card,
+    .network-card {
       background: linear-gradient(145deg, #f39c12, #e67e22);
       padding: 25px 30px;
       border-radius: 50px;
@@ -185,6 +186,17 @@
       box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6);
       min-width: 280px;
       margin: 20px;
+    }
+
+    .network-card {
+      background: linear-gradient(145deg, #e63946, #c92a2a);
+      border-color: #ffaa66;
+    }
+
+    .network-card h2 {
+      color: white;
+      font-size: 36px;
+      margin-bottom: 20px;
     }
 
     .reward-card textarea {
@@ -246,6 +258,9 @@
         font-size: 14px;
         padding: 10px;
       }
+      .network-card h2 {
+        font-size: 28px;
+      }
     }
   </style>
   <!-- Adsgram SDK -->
@@ -259,7 +274,7 @@
   <div class="sun"></div>
   <div class="mountains"></div>
   <button id="openLevelSelect" style="background:#ffb347;font-size:26px;padding:14px 45px;">🎮 START GAME</button>
-  <div style="margin-top:25px;color:#ffecb3;font-weight:bold;font-size:16px;text-align:center;">✨ 70 LEVELS | HIGH SPEED | FINAL REWARD ✨</div>
+  <div style="margin-top:25px;color:#ffecb3;font-weight:bold;font-size:16px;text-align:center;">✨ 70 LEVELS | HIGH SPEED | HIGH PADDLE ✨</div>
 </div>
 
 <!-- LEVEL SELECT -->
@@ -292,6 +307,17 @@
   </div>
 </div>
 
+<!-- NETWORK ERROR OVERLAY -->
+<div class="overlay hidden" id="networkErrorOverlay">
+  <div class="network-card">
+    <h2>⚠️ NETWORK ERROR ⚠️</h2>
+    <p style="color:white;font-size:18px;">No internet connection detected!</p>
+    <p style="color:#ffdd99;font-size:14px;margin:10px 0;">Please check your connection and try again.</p>
+    <button id="networkRetryBtn" style="background:#27ae60;margin-top:15px;">🔄 RETRY</button>
+    <button id="networkExitBtn" style="background:#e63946;margin-top:10px;">🚪 EXIT GAME</button>
+  </div>
+</div>
+
 <!-- FINAL REWARD FOR LEVEL 70 -->
 <div class="overlay hidden" id="rewardOverlay">
   <div class="reward-card">
@@ -306,10 +332,78 @@
 
 <script>
   (function() {
+    // ---------- NETWORK MONITORING ----------
+    let isOnline = navigator.onLine;
+    let gamePausedForNetwork = false;
+    let savedGameStateBeforeNetwork = null;
+    
+    function checkNetworkAndShowError() {
+      if (!navigator.onLine) {
+        isOnline = false;
+        // If game is currently running, pause and save state
+        if (currentScreen === "game" && running && !gamePausedForNetwork) {
+          gamePausedForNetwork = true;
+          savedGameStateBeforeNetwork = {
+            running: running,
+            currentLevel: currentLevel,
+            score: score,
+            balls: JSON.parse(JSON.stringify(balls)),
+            bricks: JSON.parse(JSON.stringify(bricks)),
+            paddleX: paddle.x,
+            paddleY: paddle.y
+          };
+          running = false;
+          changeScreen("network_error");
+        } else if (currentScreen !== "network_error") {
+          changeScreen("network_error");
+        }
+      } else {
+        isOnline = true;
+        // If coming back online and we were in network error screen
+        if (currentScreen === "network_error" && gamePausedForNetwork) {
+          // Restore game state
+          if (savedGameStateBeforeNetwork) {
+            currentLevel = savedGameStateBeforeNetwork.currentLevel;
+            score = savedGameStateBeforeNetwork.score;
+            balls = savedGameStateBeforeNetwork.balls;
+            bricks = savedGameStateBeforeNetwork.bricks;
+            paddle.x = savedGameStateBeforeNetwork.paddleX;
+            paddle.y = savedGameStateBeforeNetwork.paddleY;
+            running = true;
+            gamePausedForNetwork = false;
+            savedGameStateBeforeNetwork = null;
+            updateHUD();
+            changeScreen("game");
+          } else {
+            changeScreen("start");
+          }
+        } else if (currentScreen === "network_error" && !gamePausedForNetwork) {
+          changeScreen("start");
+        }
+      }
+    }
+    
+    // Listen to online/offline events
+    window.addEventListener('online', () => {
+      console.log("Network connected");
+      checkNetworkAndShowError();
+    });
+    
+    window.addEventListener('offline', () => {
+      console.log("Network disconnected");
+      checkNetworkAndShowError();
+    });
+    
+    // Periodic network check (every 2 seconds)
+    setInterval(() => {
+      if (navigator.onLine !== isOnline) {
+        checkNetworkAndShowError();
+      }
+    }, 2000);
+    
     // ---------- ADSGRAM INTERSTITIAL ADS ----------
     let adController = null;
     let isAdLoading = false;
-    let pendingAdCallback = null;
     
     // Initialize Adsgram
     function initAds() {
@@ -356,35 +450,30 @@
     
     // Ad flags
     let hasShownStartAd = false;
-    let pendingLevelCompleteAction = null;
     
-    // Show ad on level start (first time only)
     async function showStartAdIfNeeded() {
-      if (!hasShownStartAd) {
+      if (!hasShownStartAd && navigator.onLine) {
         hasShownStartAd = true;
         await showInterstitialAd();
       }
     }
     
-    // Show ad on game over
     let gameOverAdShown = false;
     async function showGameOverAd() {
-      if (!gameOverAdShown) {
+      if (!gameOverAdShown && navigator.onLine) {
         gameOverAdShown = true;
         await showInterstitialAd();
       }
     }
     
-    // Show ad on level complete
     let levelCompleteAdShown = false;
     async function showLevelCompleteAd() {
-      if (!levelCompleteAdShown) {
+      if (!levelCompleteAdShown && navigator.onLine) {
         levelCompleteAdShown = true;
         await showInterstitialAd();
       }
     }
     
-    // Reset flags for new game session
     function resetAdFlags() {
       gameOverAdShown = false;
       levelCompleteAdShown = false;
@@ -466,14 +555,13 @@
       return code;
     }
     
-    // Store the reward code for level 70
     let level70RewardCode = generateRewardCode();
     
-    // ---------- BRICK COUNT: EXACTLY 3 BRICKS FOR EVERY LEVEL 1-70 ----------
+    // ---------- BRICK COUNT: EXACTLY 3 BRICKS ----------
     function generateBricksForLevel(level) {
       const targetCount = 3;
       const cx = canvas.width / 2;
-      const cy = canvas.height / 2 - 70;
+      const cy = canvas.height / 2 - 90; // Moved bricks up a bit
       let bricksArray = [];
       
       let brickW = 85;
@@ -488,11 +576,10 @@
         let color = `hsl(${hue}, 75%, 58%)`;
         bricksArray.push({ x, y, w: brickW - 2, h: brickH - 2, alive: true, color });
       }
-      
       return bricksArray;
     }
     
-    // ---------- HIGH SPEED SYSTEM - INCREASED SPEED ----------
+    // ---------- HIGH SPEED SYSTEM ----------
     function getBallBaseSpeed() {
       let speed = 14 + (currentLevel * 0.12);
       return Math.min(speed, 22);
@@ -503,9 +590,10 @@
       document.getElementById('ballsCount').innerText = balls.length;
     }
     
+    // PADDLE POSITION - MUCH HIGHER (moved up significantly)
     function resetPositions() {
       paddle.x = canvas.width / 2 - paddle.w / 2;
-      paddle.y = canvas.height - 110;
+      paddle.y = canvas.height - 310; // Higher paddle position (was -110, now -210)
       balls = [{ x: canvas.width / 2, y: paddle.y - 18, r: 7, vx: 0, vy: 0, stuck: true }];
       updateHUD();
     }
@@ -524,7 +612,6 @@
       }
     }
     
-    // Add extra ball with chance (when brick breaks)
     function tryAddExtraBall(x, y) {
       if (Math.random() < 0.22) {
         if (balls.length < 8) {
@@ -543,7 +630,6 @@
       }
     }
     
-    // Show Final Reward for Level 70
     function showFinalReward() {
       playFinalReward();
       document.getElementById('rewardCode').value = level70RewardCode;
@@ -551,7 +637,6 @@
       currentScreen = "reward";
     }
     
-    // Level complete handler with ad
     async function handleLevelComplete() {
       running = false;
       playLevelComplete();
@@ -561,27 +646,22 @@
         saveGameProgress();
       }
       
-      // Show reward ONLY at level 70 completion
       if (currentLevel === maxLevels) {
         showFinalReward();
       } else {
-        // Show interstitial ad on level complete
         await showLevelCompleteAd();
         document.getElementById('levelCompleteOverlay').classList.remove('hidden');
       }
     }
     
-    // Game Over handler with ad
     async function handleGameOver() {
       running = false;
       playGameOver();
-      // Show interstitial ad on game over
       await showGameOverAd();
       document.getElementById('gameOverOverlay').classList.remove('hidden');
       changeScreen("gameover");
     }
     
-    // Main update loop
     function updateGame() {
       if (currentScreen !== "game" || !running) return;
       
@@ -591,12 +671,10 @@
         ball.x += ball.vx;
         ball.y += ball.vy;
         
-        // Wall collisions
         if (ball.x - ball.r <= 0) { ball.x = ball.r; ball.vx = -ball.vx; }
         if (ball.x + ball.r >= canvas.width) { ball.x = canvas.width - ball.r; ball.vx = -ball.vx; }
         if (ball.y - ball.r <= 0) { ball.y = ball.r; ball.vy = -ball.vy; }
         
-        // Paddle collision
         if (ball.vy > 0 && ball.y + ball.r >= paddle.y && ball.y - ball.r <= paddle.y + paddle.h &&
             ball.x + ball.r >= paddle.x && ball.x - ball.r <= paddle.x + paddle.w) {
           let hitPos = (ball.x - paddle.x) / paddle.w;
@@ -607,7 +685,6 @@
           playPaddleHit();
         }
         
-        // Brick collisions
         let brickHit = false;
         for (let b of bricks) {
           if (b.alive && ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
@@ -615,7 +692,6 @@
             b.alive = false;
             brickHit = true;
             
-            // Collision direction
             let overlapL = (ball.x + ball.r) - b.x;
             let overlapR = (b.x + b.w) - (ball.x - ball.r);
             let overlapT = (ball.y + ball.r) - b.y;
@@ -624,18 +700,14 @@
             if (minOverlap === overlapL || minOverlap === overlapR) ball.vx = -ball.vx;
             else ball.vy = -ball.vy;
             
-            // Score: +1 per brick
             score += 1;
             updateHUD();
             playBrickHit();
-            
-            // Chance to add extra ball at brick position
             tryAddExtraBall(b.x + b.w / 2, b.y + b.h / 2);
             break;
           }
         }
         
-        // Death condition - ball falls
         if (ball.y + ball.r > canvas.height) {
           balls.splice(i, 1);
           i--;
@@ -653,7 +725,6 @@
         return;
       }
       
-      // Level complete - all 3 bricks destroyed
       if (bricks.length && bricks.every(b => !b.alive)) {
         handleLevelComplete();
       }
@@ -678,7 +749,6 @@
       if (currentScreen !== "game") return;
       drawBackground();
       
-      // Draw bricks
       for (let b of bricks) {
         if (b.alive) {
           ctx.fillStyle = b.color;
@@ -687,19 +757,15 @@
           ctx.fillRect(b.x, b.y, b.w, b.h);
           ctx.fillStyle = "#fff3cf";
           ctx.fillRect(b.x + 3, b.y + 3, b.w - 6, 4);
-          ctx.fillStyle = "rgba(255,255,200,0.4)";
-          ctx.fillRect(b.x + 2, b.y + 2, b.w - 4, 3);
         }
       }
       ctx.shadowBlur = 0;
       
-      // Draw paddle
       ctx.fillStyle = "#ffd966";
       ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
       ctx.fillStyle = "#ffe5a3";
       ctx.fillRect(paddle.x + 4, paddle.y - 2, paddle.w - 8, 4);
       
-      // Draw balls with glow
       for (let ball of balls) {
         ctx.fillStyle = "#ffaa66";
         ctx.beginPath();
@@ -717,7 +783,6 @@
         ctx.shadowBlur = 0;
       }
       
-      // Extra HUD text
       ctx.font = "bold 16px monospace";
       ctx.fillStyle = "#ffaa55";
       ctx.fillText(`LEVEL ${currentLevel}`, canvas.width - 85, 45);
@@ -726,12 +791,10 @@
       ctx.fillText(`SPEED: ${getBallBaseSpeed().toFixed(1)}`, canvas.width - 85, 75);
       
       let remaining = bricks.filter(b => b.alive).length;
-      ctx.font = "bold 14px monospace";
       ctx.fillStyle = "#ffaa88";
       ctx.fillText(`BRICKS: ${remaining}/3`, canvas.width - 85, 105);
     }
     
-    // ---------- SCREEN MANAGEMENT ----------
     function changeScreen(scr) {
       currentScreen = scr;
       document.querySelectorAll('.overlay').forEach(el => el.classList.add('hidden'));
@@ -743,10 +806,14 @@
       }
       if (scr === "reward") document.getElementById('rewardOverlay').classList.remove('hidden');
       if (scr === "gameover") document.getElementById('gameOverOverlay').classList.remove('hidden');
+      if (scr === "network_error") document.getElementById('networkErrorOverlay').classList.remove('hidden');
     }
     
     async function startLevel() {
-      // Show ad when first entering game
+      if (!navigator.onLine) {
+        changeScreen("network_error");
+        return;
+      }
       await showStartAdIfNeeded();
       resetAdFlags();
       changeScreen("game");
@@ -774,7 +841,7 @@
       }
     }
     
-    // ---------- MOBILE & TOUCH CONTROLS ----------
+    // ---------- CONTROLS ----------
     function onMove(clientX) {
       if (currentScreen !== "game") return;
       const rect = canvas.getBoundingClientRect();
@@ -792,6 +859,10 @@
     
     // Button listeners
     document.getElementById('openLevelSelect').onclick = async () => { 
+      if (!navigator.onLine) {
+        changeScreen("network_error");
+        return;
+      }
       changeScreen("levels"); 
       resumeAudioCtx();
       await showStartAdIfNeeded();
@@ -819,6 +890,35 @@
       alert('🎉 7-Digit Reward Code Copied! 🎉'); 
     };
     
+    // Network error buttons
+    document.getElementById('networkRetryBtn').onclick = () => {
+      if (navigator.onLine) {
+        if (gamePausedForNetwork && savedGameStateBeforeNetwork) {
+          currentLevel = savedGameStateBeforeNetwork.currentLevel;
+          score = savedGameStateBeforeNetwork.score;
+          balls = savedGameStateBeforeNetwork.balls;
+          bricks = savedGameStateBeforeNetwork.bricks;
+          paddle.x = savedGameStateBeforeNetwork.paddleX;
+          paddle.y = savedGameStateBeforeNetwork.paddleY;
+          running = true;
+          gamePausedForNetwork = false;
+          savedGameStateBeforeNetwork = null;
+          updateHUD();
+          changeScreen("game");
+        } else {
+          changeScreen("start");
+        }
+      } else {
+        alert("Still no internet connection. Please connect and try again.");
+      }
+    };
+    
+    document.getElementById('networkExitBtn').onclick = () => {
+      gamePausedForNetwork = false;
+      savedGameStateBeforeNetwork = null;
+      changeScreen("start");
+    };
+    
     document.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => { playClick(); resumeAudioCtx(); }));
     
     // Game loops
@@ -826,7 +926,7 @@
     function animateDraw() { drawGame(); requestAnimationFrame(animateDraw); }
     animateDraw();
     
-    // Initialize Adsgram and start game
+    // Initialize
     initAds();
     loadGameProgress();
     resumeAudioCtx();
