@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover" name="viewport"/>
-  <title>Brick Ball — 70 Levels | Reward at Level 7</title>
+  <title>Brick Ball — 70 Levels | High Speed + Ads</title>
   <style>
     * {
       -webkit-user-select: none;
@@ -183,7 +183,7 @@
       text-align: center;
       border: 3px solid gold;
       box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6);
-      min-width: 260px;
+      min-width: 280px;
       margin: 20px;
     }
 
@@ -191,22 +191,24 @@
       width: 100%;
       background: #2d2f36;
       color: #ffd966;
-      font-size: 16px;
+      font-size: 18px;
+      font-weight: bold;
       border: 2px solid #ffcc66;
       border-radius: 20px;
-      padding: 12px;
+      padding: 15px;
       margin: 15px 0;
       font-family: monospace;
       resize: none;
       text-align: center;
-      font-weight: bold;
+      letter-spacing: 1px;
     }
 
     .copy-btn {
       background: #2ecc71;
       color: #1e2a2e;
       margin-top: 6px;
-      padding: 8px 24px;
+      padding: 10px 28px;
+      font-size: 18px;
     }
 
     .gameover-card {
@@ -240,8 +242,14 @@
         padding: 8px 20px;
         font-size: 16px;
       }
+      .reward-card textarea {
+        font-size: 14px;
+        padding: 10px;
+      }
     }
   </style>
+  <!-- Adsgram SDK -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body oncontextmenu="return false;">
 <canvas id="game"></canvas>
@@ -251,7 +259,7 @@
   <div class="sun"></div>
   <div class="mountains"></div>
   <button id="openLevelSelect" style="background:#ffb347;font-size:26px;padding:14px 45px;">🎮 START GAME</button>
-  <div style="margin-top:25px;color:#ffecb3;font-weight:bold;font-size:16px;text-align:center;">✨ 70 LEVELS | REWARD AT LEVEL 7 ✨</div>
+  <div style="margin-top:25px;color:#ffecb3;font-weight:bold;font-size:16px;text-align:center;">✨ 70 LEVELS | HIGH SPEED | FINAL REWARD ✨</div>
 </div>
 
 <!-- LEVEL SELECT -->
@@ -262,7 +270,7 @@
   <button id="backToStartFromLevels" style="margin-top:20px;background:#e67e22;">🏠 MAIN MENU</button>
 </div>
 
-<!-- IN-GAME HUD (NO BACK BUTTON) -->
+<!-- IN-GAME HUD -->
 <div class="hud"><span>💎 SCORE</span><span id="score">0</span></div>
 <div class="hud right-hud"><span>⚡ BALLS</span><span id="ballsCount">1</span></div>
 
@@ -284,23 +292,13 @@
   </div>
 </div>
 
-<!-- REWARD FOR LEVEL 7 -->
-<div class="overlay hidden" id="rewardLevel7Overlay">
-  <div class="reward-card">
-    <h2>🎁 SECRET REWARD UNLOCKED! 🎁</h2>
-    <p style="color:white;font-size:18px;">Congratulations on completing Level 7! Here's your exclusive code:</p>
-    <textarea id="level7RewardCode" rows="2" readonly>🏆 BRICK-7-MASTER-2025 🏆</textarea>
-    <button id="copyLevel7RewardBtn" class="copy-btn">📋 COPY CODE</button>
-    <button id="closeRewardBtn" style="background:#27ae60; margin-top:15px;">➡ CONTINUE</button>
-  </div>
-</div>
-
 <!-- FINAL REWARD FOR LEVEL 70 -->
 <div class="overlay hidden" id="rewardOverlay">
   <div class="reward-card">
     <h2>🏆 GRAND MASTER REWARD 🏆</h2>
-    <p style="color:white;font-size:18px;">You conquered all 70 levels! Exclusive code:</p>
-    <textarea id="rewardCode" rows="2" readonly>🏅 BRICK-70-LEGEND-2025 🏅</textarea>
+    <p style="color:white;font-size:18px;">Congratulations! You conquered all 70 levels!</p>
+    <p style="color:#ffd966;font-size:14px;">Your exclusive 7-digit reward code:</p>
+    <textarea id="rewardCode" rows="1" readonly></textarea>
     <button id="copyRewardBtn" class="copy-btn">📋 COPY CODE</button>
     <button id="rewardBackBtn" style="background:#555; margin-top:15px;">🔙 MAIN MENU</button>
   </div>
@@ -308,6 +306,90 @@
 
 <script>
   (function() {
+    // ---------- ADSGRAM INTERSTITIAL ADS ----------
+    let adController = null;
+    let isAdLoading = false;
+    let pendingAdCallback = null;
+    
+    // Initialize Adsgram
+    function initAds() {
+      try {
+        if (window.Adsgram) {
+          adController = window.Adsgram.init({ blockId: "int-25869" });
+          console.log("Adsgram initialized");
+        } else {
+          console.log("Adsgram SDK not loaded yet, retrying...");
+          setTimeout(initAds, 500);
+        }
+      } catch(e) {
+        console.log("Ads init error:", e);
+      }
+    }
+    
+    // Show interstitial ad with promise
+    function showInterstitialAd() {
+      return new Promise((resolve) => {
+        if (!adController || isAdLoading) {
+          resolve();
+          return;
+        }
+        
+        isAdLoading = true;
+        
+        try {
+          adController.show().then(() => {
+            console.log("Ad shown successfully");
+            isAdLoading = false;
+            resolve();
+          }).catch((err) => {
+            console.log("Ad error:", err);
+            isAdLoading = false;
+            resolve();
+          });
+        } catch(e) {
+          console.log("Ad show exception:", e);
+          isAdLoading = false;
+          resolve();
+        }
+      });
+    }
+    
+    // Ad flags
+    let hasShownStartAd = false;
+    let pendingLevelCompleteAction = null;
+    
+    // Show ad on level start (first time only)
+    async function showStartAdIfNeeded() {
+      if (!hasShownStartAd) {
+        hasShownStartAd = true;
+        await showInterstitialAd();
+      }
+    }
+    
+    // Show ad on game over
+    let gameOverAdShown = false;
+    async function showGameOverAd() {
+      if (!gameOverAdShown) {
+        gameOverAdShown = true;
+        await showInterstitialAd();
+      }
+    }
+    
+    // Show ad on level complete
+    let levelCompleteAdShown = false;
+    async function showLevelCompleteAd() {
+      if (!levelCompleteAdShown) {
+        levelCompleteAdShown = true;
+        await showInterstitialAd();
+      }
+    }
+    
+    // Reset flags for new game session
+    function resetAdFlags() {
+      gameOverAdShown = false;
+      levelCompleteAdShown = false;
+    }
+    
     // ---------- CANVAS ----------
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
@@ -340,7 +422,7 @@
     function playGameOver() { safePlay(()=>{ [392,349,330].forEach((f,i)=>{ setTimeout(()=>{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value=f; gain.gain.value=0.3; gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.4); osc.start(); osc.stop(audioCtx.currentTime+0.4); }, i*170); }); }); }
     function playLaunch() { safePlay(()=>{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value=350; osc.frequency.exponentialRampToValueAtTime(850, audioCtx.currentTime+0.12); gain.gain.value=0.24; gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.13); osc.start(); osc.stop(audioCtx.currentTime+0.13); }); }
     function playExtraBall() { safePlay(()=>{ [523,784,1047].forEach((f,i)=>{ setTimeout(()=>{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.type='sine'; osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value=f; gain.gain.value=0.25; gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.2); osc.start(); osc.stop(audioCtx.currentTime+0.2); }, i*70); }); }); }
-    function playReward() { safePlay(()=>{ [523,659,784,1047,1318].forEach((f,i)=>{ setTimeout(()=>{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.type='sine'; osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value=f; gain.gain.value=0.35; gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.3); osc.start(); osc.stop(audioCtx.currentTime+0.3); }, i*130); }); }); }
+    function playFinalReward() { safePlay(()=>{ [523,659,784,1047,1318,1568].forEach((f,i)=>{ setTimeout(()=>{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.type='sine'; osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value=f; gain.gain.value=0.4; gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.35); osc.start(); osc.stop(audioCtx.currentTime+0.35); }, i*150); }); }); }
     function playClick() { safePlay(()=>{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value=700; osc.frequency.exponentialRampToValueAtTime(450, audioCtx.currentTime+0.05); gain.gain.value=0.16; gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.06); osc.start(); osc.stop(audioCtx.currentTime+0.06); }); }
     function resumeAudioCtx() { if(audioCtx.state === 'suspended') audioCtx.resume(); }
 
@@ -351,7 +433,6 @@
     let paddle = { w: 140, h: 18, x: 0, y: 0 };
     let maxLevels = 70;
     let unlockedLevels = [1];
-    let level7RewardClaimed = false;
     
     // Stars background
     let stars = [];
@@ -361,8 +442,7 @@
     function saveGameProgress() { 
       localStorage.setItem('brickBall70pro', JSON.stringify({ 
         unlocked: unlockedLevels, 
-        currentLevel: currentLevel,
-        level7RewardClaimed: level7RewardClaimed
+        currentLevel: currentLevel
       })); 
     }
     function loadGameProgress() { 
@@ -371,27 +451,31 @@
         let p = JSON.parse(d); 
         unlockedLevels = p.unlocked || [1]; 
         currentLevel = p.currentLevel || 1;
-        level7RewardClaimed = p.level7RewardClaimed || false;
       } else { 
         unlockedLevels = [1]; 
         currentLevel = 1;
-        level7RewardClaimed = false;
       } 
     }
     
-    // ---------- BRICK COUNT: EXACTLY 3 BRICKS FOR EVERY LEVEL 1-70 ----------
-    function getBrickCountForLevel(level) {
-      return 3; // Every level has exactly 3 bricks
+    // Generate random 7-digit reward code
+    function generateRewardCode() {
+      let code = '';
+      for(let i = 0; i < 7; i++) {
+        code += Math.floor(Math.random() * 10);
+      }
+      return code;
     }
     
-    // Generate 3 bricks with beautiful varied positions and colors
+    // Store the reward code for level 70
+    let level70RewardCode = generateRewardCode();
+    
+    // ---------- BRICK COUNT: EXACTLY 3 BRICKS FOR EVERY LEVEL 1-70 ----------
     function generateBricksForLevel(level) {
       const targetCount = 3;
       const cx = canvas.width / 2;
       const cy = canvas.height / 2 - 70;
       let bricksArray = [];
       
-      // Create 3 bricks in different horizontal positions with spacing
       let brickW = 85;
       let brickH = 28;
       let totalWidth = brickW * 3 + 30;
@@ -400,7 +484,6 @@
       for (let i = 0; i < targetCount; i++) {
         let x = startX + i * (brickW + 15);
         let y = cy;
-        // Different vibrant colors for each brick based on level
         let hue = (level * 25 + i * 120) % 360;
         let color = `hsl(${hue}, 75%, 58%)`;
         bricksArray.push({ x, y, w: brickW - 2, h: brickH - 2, alive: true, color });
@@ -409,10 +492,10 @@
       return bricksArray;
     }
     
-    // ---------- HIGH SPEED SYSTEM ----------
+    // ---------- HIGH SPEED SYSTEM - INCREASED SPEED ----------
     function getBallBaseSpeed() {
-      let speed = 11.5 + (currentLevel * 0.1);
-      return Math.min(speed, 19);
+      let speed = 14 + (currentLevel * 0.12);
+      return Math.min(speed, 22);
     }
     
     function updateHUD() {
@@ -460,11 +543,42 @@
       }
     }
     
-    // Show Level 7 Reward
-    function showLevel7Reward() {
-      playReward();
-      document.getElementById('rewardLevel7Overlay').classList.remove('hidden');
-      currentScreen = "level7reward";
+    // Show Final Reward for Level 70
+    function showFinalReward() {
+      playFinalReward();
+      document.getElementById('rewardCode').value = level70RewardCode;
+      document.getElementById('rewardOverlay').classList.remove('hidden');
+      currentScreen = "reward";
+    }
+    
+    // Level complete handler with ad
+    async function handleLevelComplete() {
+      running = false;
+      playLevelComplete();
+      
+      if (currentLevel < maxLevels && !unlockedLevels.includes(currentLevel + 1)) {
+        unlockedLevels.push(currentLevel + 1);
+        saveGameProgress();
+      }
+      
+      // Show reward ONLY at level 70 completion
+      if (currentLevel === maxLevels) {
+        showFinalReward();
+      } else {
+        // Show interstitial ad on level complete
+        await showLevelCompleteAd();
+        document.getElementById('levelCompleteOverlay').classList.remove('hidden');
+      }
+    }
+    
+    // Game Over handler with ad
+    async function handleGameOver() {
+      running = false;
+      playGameOver();
+      // Show interstitial ad on game over
+      await showGameOverAd();
+      document.getElementById('gameOverOverlay').classList.remove('hidden');
+      changeScreen("gameover");
     }
     
     // Main update loop
@@ -486,7 +600,7 @@
         if (ball.vy > 0 && ball.y + ball.r >= paddle.y && ball.y - ball.r <= paddle.y + paddle.h &&
             ball.x + ball.r >= paddle.x && ball.x - ball.r <= paddle.x + paddle.w) {
           let hitPos = (ball.x - paddle.x) / paddle.w;
-          let angle = (hitPos - 0.5) * 1.35;
+          let angle = (hitPos - 0.5) * 1.4;
           let speed = Math.hypot(ball.vx, ball.vy);
           ball.vx = Math.sin(angle) * speed;
           ball.vy = -Math.abs(Math.cos(angle) * speed);
@@ -526,10 +640,8 @@
           balls.splice(i, 1);
           i--;
           if (balls.length === 0) {
-            running = false;
-            playGameOver();
-            document.getElementById('gameOverOverlay').classList.remove('hidden');
-            changeScreen("gameover");
+            handleGameOver();
+            return;
           } else {
             updateHUD();
           }
@@ -537,35 +649,13 @@
       }
       
       if (balls.length === 0 && running) {
-        running = false;
-        playGameOver();
-        document.getElementById('gameOverOverlay').classList.remove('hidden');
-        changeScreen("gameover");
+        handleGameOver();
+        return;
       }
       
       // Level complete - all 3 bricks destroyed
       if (bricks.length && bricks.every(b => !b.alive)) {
-        running = false;
-        playLevelComplete();
-        
-        // Check if level 7 completed and reward not yet claimed
-        if (currentLevel === 7 && !level7RewardClaimed) {
-          level7RewardClaimed = true;
-          saveGameProgress();
-          showLevel7Reward();
-          return;
-        }
-        
-        if (currentLevel < maxLevels && !unlockedLevels.includes(currentLevel + 1)) {
-          unlockedLevels.push(currentLevel + 1);
-          saveGameProgress();
-        }
-        if (currentLevel === maxLevels) {
-          document.getElementById('rewardOverlay').classList.remove('hidden');
-          changeScreen("reward");
-        } else {
-          document.getElementById('levelCompleteOverlay').classList.remove('hidden');
-        }
+        handleLevelComplete();
       }
     }
     
@@ -609,7 +699,7 @@
       ctx.fillStyle = "#ffe5a3";
       ctx.fillRect(paddle.x + 4, paddle.y - 2, paddle.w - 8, 4);
       
-      // Draw balls
+      // Draw balls with glow
       for (let ball of balls) {
         ctx.fillStyle = "#ffaa66";
         ctx.beginPath();
@@ -632,7 +722,7 @@
       ctx.fillStyle = "#ffaa55";
       ctx.fillText(`LEVEL ${currentLevel}`, canvas.width - 85, 45);
       ctx.font = "bold 14px monospace";
-      ctx.fillStyle = "#88ccff";
+      ctx.fillStyle = "#ff8888";
       ctx.fillText(`SPEED: ${getBallBaseSpeed().toFixed(1)}`, canvas.width - 85, 75);
       
       let remaining = bricks.filter(b => b.alive).length;
@@ -653,27 +743,18 @@
       }
       if (scr === "reward") document.getElementById('rewardOverlay').classList.remove('hidden');
       if (scr === "gameover") document.getElementById('gameOverOverlay').classList.remove('hidden');
-      if (scr === "level7reward") document.getElementById('rewardLevel7Overlay').classList.remove('hidden');
     }
     
-    function startLevel() {
+    async function startLevel() {
+      // Show ad when first entering game
+      await showStartAdIfNeeded();
+      resetAdFlags();
       changeScreen("game");
       running = true;
       score = 0;
       bricks = generateBricksForLevel(currentLevel);
       resetPositions();
       updateHUD();
-    }
-    
-    function continueFromLevel7Reward() {
-      document.getElementById('rewardLevel7Overlay').classList.add('hidden');
-      // Show level complete overlay to continue
-      if (currentLevel < maxLevels && !unlockedLevels.includes(currentLevel + 1)) {
-        unlockedLevels.push(currentLevel + 1);
-        saveGameProgress();
-      }
-      document.getElementById('levelCompleteOverlay').classList.remove('hidden');
-      currentScreen = "levelcomplete";
     }
     
     function buildLevelGrid() {
@@ -684,7 +765,11 @@
         box.className = 'lvlBox';
         box.innerText = i;
         if (!unlockedLevels.includes(i)) box.classList.add('locked');
-        else box.addEventListener('click', () => { playClick(); currentLevel = i; startLevel(); });
+        else box.addEventListener('click', async () => { 
+          playClick(); 
+          currentLevel = i; 
+          await startLevel();
+        });
         grid.appendChild(box);
       }
     }
@@ -706,16 +791,33 @@
     canvas.addEventListener('touchstart', (e) => { if (currentScreen === "game" && running) launchBall(); resumeAudioCtx(); });
     
     // Button listeners
-    document.getElementById('openLevelSelect').onclick = () => { changeScreen("levels"); resumeAudioCtx(); };
-    document.getElementById('restartBtn').onclick = () => { document.getElementById('gameOverOverlay').classList.add('hidden'); startLevel(); };
+    document.getElementById('openLevelSelect').onclick = async () => { 
+      changeScreen("levels"); 
+      resumeAudioCtx();
+      await showStartAdIfNeeded();
+    };
+    document.getElementById('restartBtn').onclick = async () => { 
+      document.getElementById('gameOverOverlay').classList.add('hidden'); 
+      await startLevel();
+    };
     document.getElementById('backBtn').onclick = () => { changeScreen("levels"); };
-    document.getElementById('nextLevelBtn').onclick = () => { document.getElementById('levelCompleteOverlay').classList.add('hidden'); if (currentLevel < maxLevels) { currentLevel++; saveGameProgress(); startLevel(); } else changeScreen("levels"); };
+    document.getElementById('nextLevelBtn').onclick = async () => { 
+      document.getElementById('levelCompleteOverlay').classList.add('hidden'); 
+      if (currentLevel < maxLevels) { 
+        currentLevel++; 
+        saveGameProgress(); 
+        await startLevel();
+      } else changeScreen("levels"); 
+    };
     document.getElementById('levelsBtn').onclick = () => { changeScreen("levels"); };
     document.getElementById('backToStartFromLevels').onclick = () => { changeScreen("start"); };
     document.getElementById('rewardBackBtn').onclick = () => { changeScreen("start"); };
-    document.getElementById('copyRewardBtn').onclick = () => { let codeArea = document.getElementById('rewardCode'); codeArea.select(); document.execCommand('copy'); alert('✨ Master Code Copied! ✨'); };
-    document.getElementById('copyLevel7RewardBtn').onclick = () => { let codeArea = document.getElementById('level7RewardCode'); codeArea.select(); document.execCommand('copy'); alert('🎁 Reward Code Copied! 🎁'); };
-    document.getElementById('closeRewardBtn').onclick = () => { continueFromLevel7Reward(); };
+    document.getElementById('copyRewardBtn').onclick = () => { 
+      let codeArea = document.getElementById('rewardCode'); 
+      codeArea.select(); 
+      document.execCommand('copy'); 
+      alert('🎉 7-Digit Reward Code Copied! 🎉'); 
+    };
     
     document.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => { playClick(); resumeAudioCtx(); }));
     
@@ -724,7 +826,8 @@
     function animateDraw() { drawGame(); requestAnimationFrame(animateDraw); }
     animateDraw();
     
-    // Initialization
+    // Initialize Adsgram and start game
+    initAds();
     loadGameProgress();
     resumeAudioCtx();
     changeScreen("start");
