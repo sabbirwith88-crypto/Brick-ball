@@ -3,19 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>✨ ADS REWARD | Start → Watch Ads → +1 Point ✨</title>
-  <!-- Google Fonts + Font Awesome 6 (smooth icons) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <title>✨ অ্যাড রিওয়ার্ড | Start → অ্যাড দেখুন → +1 পয়েন্ট ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
-  <!-- TELEGRAM & RICH ADS SCRIPTS (as provided) -->
+  <!-- টেলিগ্রাম ও রিচ অ্যাড স্ক্রিপ্ট (আপনার দেওয়া pubId সহ) -->
   <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
   <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
   <script>
-    // Initialize Telegram Ads Controller (RichInfo / Playable Ads)
     window.TelegramAdsController = new TelegramAdsController();
     window.TelegramAdsController.initialize({
-      pubId: "null",
+      pubId: "1008310",
       appId: "7019",
     });
   </script>
@@ -27,7 +25,6 @@
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
-
     body {
       min-height: 100vh;
       background: radial-gradient(ellipse at 30% 40%, #0a0f1e, #02040c);
@@ -37,11 +34,9 @@
       justify-content: center;
       position: relative;
       overflow-x: hidden;
-      cursor: default;
       padding: 1rem;
     }
-
-    /* SMOOTH ORBS & GLASS BACKGROUND */
+    /* স্মুথ অর্বস */
     .smooth-orb {
       position: absolute;
       border-radius: 50%;
@@ -55,13 +50,10 @@
     .orb2 { width: 500px; height: 500px; background: #3b82f6; bottom: -200px; right: -120px; animation-duration: 25s; }
     .orb3 { width: 300px; height: 300px; background: #facc15; top: 50%; left: 70%; filter: blur(110px); opacity: 0.25; }
     .orb4 { width: 220px; height: 220px; background: #c084fc; bottom: 5%; left: 5%; filter: blur(70px); }
-
     @keyframes smoothFloat {
       0% { transform: translate(0, 0) scale(1); }
       100% { transform: translate(30px, -30px) scale(1.15); }
     }
-
-    /* subtle animated grid */
     .grid-lines {
       position: absolute;
       width: 100%;
@@ -72,8 +64,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
-    /* MAIN CARD — glassmorph + smooth transitions */
     .reward-card {
       background: rgba(12, 20, 35, 0.65);
       backdrop-filter: blur(16px);
@@ -83,16 +73,10 @@
       max-width: 640px;
       text-align: center;
       box-shadow: 0 35px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,210,0.12), 0 0 28px rgba(0, 255, 255, 0.15);
-      transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.3s ease;
+      transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
       z-index: 10;
       border: 1px solid rgba(255,245,200,0.2);
     }
-    .reward-card:hover {
-      transform: scale(1.01);
-      box-shadow: 0 40px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,220,100,0.3);
-    }
-
-    /* header with gradient */
     .glow-header {
       font-size: 2.5rem;
       font-weight: 800;
@@ -107,12 +91,6 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .glow-header i {
-      background: none;
-      color: #FFD966;
-      text-shadow: 0 0 6px #ffae42;
-      font-size: 2.2rem;
-    }
     .sub-badge {
       background: rgba(255,200,100,0.15);
       backdrop-filter: blur(4px);
@@ -124,10 +102,7 @@
       color: #ffdeae;
       border: 1px solid rgba(255,215,0,0.4);
       margin-bottom: 1.5rem;
-      letter-spacing: 0.5px;
     }
-
-    /* SCORE PANEL - smooth */
     .score-pavilion {
       background: rgba(0, 0, 0, 0.45);
       border-radius: 2.5rem;
@@ -136,16 +111,6 @@
       backdrop-filter: blur(5px);
       border: 1px solid rgba(255,215,0,0.25);
       transition: all 0.2s ease;
-    }
-    .score-label {
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: #ffdd99;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
     }
     .score-number {
       font-size: 5rem;
@@ -158,17 +123,7 @@
       transition: transform 0.12s cubic-bezier(0.34, 1.2, 0.64, 1);
       display: inline-block;
     }
-    .score-pop {
-      transform: scale(1.18);
-      text-shadow: 0 0 18px #ffb347;
-    }
-
-    /* START BUTTON (smooth + disabled state) */
-    .start-wrapper {
-      position: relative;
-      display: inline-block;
-      margin: 0.8rem 0 0.5rem;
-    }
+    .score-pop { transform: scale(1.18); text-shadow: 0 0 18px #ffb347; }
     .start-btn {
       background: linear-gradient(125deg, #f09b42, #cf511c);
       border: none;
@@ -179,52 +134,19 @@
       color: white;
       border-radius: 100px;
       cursor: pointer;
-      box-shadow: 0 12px 0 #6e2c0e, 0 8px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 12px 0 #6e2c0e;
       transition: all 0.08s linear;
       display: inline-flex;
       align-items: center;
       gap: 14px;
-      letter-spacing: 1.5px;
     }
-    .start-btn:active {
-      transform: translateY(5px);
-      box-shadow: 0 5px 0 #6e2c0e;
-    }
+    .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #6e2c0e; }
     .start-btn.disabled-btn, .start-btn:disabled {
       opacity: 0.7;
-      transform: translateY(0);
       cursor: not-allowed;
-      filter: grayscale(0.1);
       pointer-events: none;
+      transform: translateY(0);
     }
-    .start-btn i {
-      font-size: 1.7rem;
-    }
-
-    /* loading spinner (smooth) */
-    .loading-spinner {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(0,0,0,0.6);
-      border-radius: 60px;
-      padding: 0.5rem 1.2rem;
-      margin-top: 12px;
-      font-size: 0.9rem;
-      color: #ffdfaa;
-      backdrop-filter: blur(8px);
-    }
-    .spinner-icon {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255,200,100,0.3);
-      border-top: 2px solid #ffb347;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    /* reset button */
     .reset-btn {
       background: rgba(20, 30, 55, 0.8);
       border: 1px solid rgba(255, 210, 120, 0.6);
@@ -241,13 +163,7 @@
       align-items: center;
       gap: 10px;
     }
-    .reset-btn:hover {
-      background: rgba(45, 60, 90, 0.9);
-      transform: scale(0.97);
-      border-color: #ffbc6e;
-    }
-
-    /* footer smooth */
+    .reset-btn:hover { background: rgba(45, 60, 90, 0.9); transform: scale(0.97); }
     .footer-note {
       margin-top: 1.8rem;
       font-size: 0.7rem;
@@ -258,8 +174,6 @@
       border-top: 1px dashed rgba(255,215,0,0.25);
       padding-top: 1rem;
     }
-
-    /* floating point animation */
     .float-plus-ad {
       position: absolute;
       bottom: 110%;
@@ -276,15 +190,12 @@
       box-shadow: 0 4px 12px black;
       animation: floatUpFade 0.85s forwards;
       z-index: 200;
-      font-family: monospace;
     }
     @keyframes floatUpFade {
       0% { opacity: 1; bottom: 100%; transform: translateX(-50%) scale(0.7);}
       40% { opacity: 1; transform: translateX(-50%) scale(1.2);}
       100% { opacity: 0; bottom: 170%; transform: translateX(-50%) scale(0.9);}
     }
-
-    /* ad status message */
     .ad-status {
       font-size: 0.8rem;
       margin-top: 12px;
@@ -293,10 +204,9 @@
       display: inline-block;
       padding: 4px 14px;
       border-radius: 40px;
-      transition: all 0.2s;
     }
     @media (max-width: 550px) {
-      .reward-card { padding: 1.5rem; border-radius: 2rem; }
+      .reward-card { padding: 1.5rem; }
       .glow-header { font-size: 1.9rem; }
       .score-number { font-size: 3.8rem; }
       .start-btn { padding: 0.8rem 1.5rem; font-size: 1.4rem; }
@@ -304,330 +214,150 @@
   </style>
 </head>
 <body>
-
-  <div class="smooth-orb orb1"></div>
-  <div class="smooth-orb orb2"></div>
-  <div class="smooth-orb orb3"></div>
-  <div class="smooth-orb orb4"></div>
+  <div class="smooth-orb orb1"></div><div class="smooth-orb orb2"></div>
+  <div class="smooth-orb orb3"></div><div class="smooth-orb orb4"></div>
   <div class="grid-lines"></div>
 
   <main class="reward-card">
-    <div class="glow-header">
-      <i class="fas fa-trophy"></i> 
-      <span>AD REWARD ZONE</span> 
-      <i class="fas fa-film"></i>
-    </div>
-    <div class="sub-badge">
-      <i class="fas fa-play-circle"></i> watch ads → earn points
-    </div>
+    <div class="glow-header"><i class="fas fa-trophy"></i> <span>অ্যাড রিওয়ার্ড জোন</span> <i class="fas fa-film"></i></div>
+    <div class="sub-badge"><i class="fas fa-play-circle"></i> অ্যাড দেখুন → পয়েন্ট জিতুন</div>
 
-    <!-- POINTS DISPLAY -->
     <div class="score-pavilion" id="scorePanel">
-      <div class="score-label">
-        <i class="fas fa-coins"></i> YOUR REWARD POINTS <i class="fas fa-chart-simple"></i>
-      </div>
+      <div class="score-label" style="font-size:1rem; color:#ffdd99;"><i class="fas fa-coins"></i> আপনার পয়েন্ট</div>
       <div class="score-number" id="pointDisplay">0</div>
     </div>
 
-    <!-- START BUTTON WITH AD TRIGGER -->
-    <div class="start-wrapper" id="startWrapper">
-      <button class="start-btn" id="startBtn">
-        <i class="fas fa-play"></i> START & WATCH ADS <i class="fas fa-ad"></i>
-      </button>
+    <div style="position:relative; display:inline-block; margin:0.8rem 0 0.5rem;" id="startWrapper">
+      <button class="start-btn" id="startBtn"><i class="fas fa-play"></i> START & অ্যাড দেখুন <i class="fas fa-ad"></i></button>
     </div>
-    <div id="adStatusMsg" class="ad-status">✨ Click START → rich ad + playable ad → +1 point ✨</div>
+    <div id="adStatusMsg" class="ad-status">✨ Start ক্লিক করলেই রিচ অ্যাড + প্লেবল অ্যাড দেখাবে → +1 পয়েন্ট ✨</div>
 
-    <!-- RESET BUTTON -->
-    <div>
-      <button class="reset-btn" id="resetBtn">
-        <i class="fas fa-broom"></i> RESET SCORE
-      </button>
-    </div>
-
-    <div class="footer-note">
-      <span><i class="fas fa-bolt"></i> 1 ad view = 1 point</span>
-      <span><i class="fas fa-mobile-alt"></i> Telegram Playable + Rich</span>
-      <span><i class="fas fa-gem"></i> ultra smooth</span>
-    </div>
+    <div><button class="reset-btn" id="resetBtn"><i class="fas fa-broom"></i> রিসেট স্কোর</button></div>
+    <div class="footer-note"><span><i class="fas fa-bolt"></i> ১টি অ্যাড ভিউ = ১ পয়েন্ট</span><span><i class="fas fa-mobile-alt"></i> টেলিগ্রাম প্লেবল + রিচ</span></div>
   </main>
 
   <script>
-    // --------------------------------------------------------------
-    // SMOOTH AD INTEGRATION: RICH ADS + TELEGRAM PLAYABLE ADS
-    // On START click → show both ads sequentially → then award +1 point
-    // --------------------------------------------------------------
     let currentPoints = 0;
     const pointDisplay = document.getElementById('pointDisplay');
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
     const adStatusDiv = document.getElementById('adStatusMsg');
-    
-    // Helper: update UI with smooth pop
+    let isAdSequenceRunning = false;
+
     function updateScoreUI() {
       pointDisplay.innerText = currentPoints;
       pointDisplay.classList.add('score-pop');
       setTimeout(() => pointDisplay.classList.remove('score-pop'), 160);
     }
-
-    // Floating "+1" effect
     function showFloatingPlus() {
       const wrapper = document.getElementById('startWrapper');
       if (!wrapper) return;
       const floatEl = document.createElement('div');
       floatEl.className = 'float-plus-ad';
-      floatEl.innerHTML = '✨ +1 POINT ✨';
+      floatEl.innerHTML = '✨ +1 পয়েন্ট ✨';
       wrapper.appendChild(floatEl);
       floatEl.addEventListener('animationend', () => floatEl.remove());
       setTimeout(() => floatEl.remove(), 900);
     }
-
-    // set loading state & disable button
-    function setLoadingState(isLoading, customMsg = null) {
-      if (isLoading) {
+    function setLoading(loading, msg = null) {
+      if (loading) {
         startBtn.disabled = true;
         startBtn.classList.add('disabled-btn');
-        if (customMsg) adStatusDiv.innerHTML = `<i class="fas fa-spinner fa-pulse"></i> ${customMsg}`;
-        else adStatusDiv.innerHTML = `<i class="fas fa-hourglass-half"></i> Loading ads, please wait...`;
+        adStatusDiv.innerHTML = msg ? `<i class="fas fa-spinner fa-pulse"></i> ${msg}` : `<i class="fas fa-hourglass-half"></i> অ্যাড লোড হচ্ছে...`;
       } else {
         startBtn.disabled = false;
         startBtn.classList.remove('disabled-btn');
-        adStatusDiv.innerHTML = `✨ Ready! Click START to watch ads & earn ✨`;
+        adStatusDiv.innerHTML = `✅ প্রস্তুত! Start চাপুন → অ্যাড দেখে পয়েন্ট নিন ✅`;
       }
     }
 
-    // ========== AD HANDLERS (Robust with fallbacks & timeouts) ==========
-    // Since the TelegramAdsController from richinfo provides ad methods,
-    // we'll try to call the most common ones: showRewardedVideo, showInterstitial, showPlayableAd
-    // Also we handle "rich ad" and "telegram playable ad" as two separate calls.
-    
-    // Helper to call ad with promise (generic)
-    function showAdWithPromise(adTypeName, methodNamesToTry, timeoutMs = 8000) {
+    // অ্যাড দেখানোর হেল্পার (Rich + Playable)
+    function showAdWithPromise(adTypeName, methodNames, timeoutMs = 10000) {
       return new Promise((resolve) => {
         if (!window.TelegramAdsController) {
-          console.warn(`[ADS] ${adTypeName} not available: TelegramAdsController missing`);
-          resolve(false); // fallback, not blocking user
+          console.warn(`${adTypeName} অ্যাভেইলেবল না`);
+          resolve(false);
           return;
         }
         let tried = false;
-        let timeoutId = setTimeout(() => {
-          if (!tried) {
-            console.warn(`[ADS] ${adTypeName} timeout after ${timeoutMs}ms`);
-            resolve(false);
-          }
+        const tid = setTimeout(() => {
+          if (!tried) { console.warn(`${adTypeName} টাইমআউট`); resolve(false); }
         }, timeoutMs);
-        
-        // attempt to find working method
         let methodToCall = null;
-        for (let method of methodNamesToTry) {
-          if (typeof window.TelegramAdsController[method] === 'function') {
-            methodToCall = method;
-            break;
-          }
+        for (let m of methodNames) {
+          if (typeof window.TelegramAdsController[m] === 'function') { methodToCall = m; break; }
         }
-        if (!methodToCall) {
-          console.warn(`[ADS] No suitable method for ${adTypeName} among:`, methodNamesToTry);
-          clearTimeout(timeoutId);
-          resolve(false);
-          return;
-        }
-        
+        if (!methodToCall) { clearTimeout(tid); resolve(false); return; }
         try {
-          // Assume the method accepts a callback or returns a promise.
-          // Common pattern: controller.showRewardedVideo(callback)
-          const adCall = window.TelegramAdsController[methodToCall];
-          // Check if it expects a callback
-          if (methodToCall === 'showRewardedVideo' || methodToCall === 'showInterstitial' || methodToCall === 'showPlayableAd') {
-            adCall.call(window.TelegramAdsController, (success) => {
-              if (!tried) {
-                tried = true;
-                clearTimeout(timeoutId);
-                console.log(`[ADS] ${adTypeName} completed with result:`, success);
-                resolve(true);
-              }
-            });
-          } else {
-            // fallback: just call and assume it works
-            adCall.call(window.TelegramAdsController);
-            setTimeout(() => {
-              if (!tried) {
-                tried = true;
-                clearTimeout(timeoutId);
-                resolve(true);
-              }
-            }, 1500);
-          }
-        } catch (err) {
-          console.error(`[ADS] Error showing ${adTypeName}:`, err);
-          clearTimeout(timeoutId);
-          resolve(false);
-        }
+          window.TelegramAdsController[methodToCall]((success) => {
+            if (!tried) { tried = true; clearTimeout(tid); resolve(true); }
+          });
+        } catch(e) { clearTimeout(tid); resolve(false); }
       });
     }
-    
-    // Specific: Show RICH AD (using rewarded or interstitial)
+
     async function showRichAd() {
-      adStatusDiv.innerHTML = `<i class="fas fa-chart-line"></i> Showing RICH AD... please wait`;
-      // try multiple methods that might represent a rich / rewarded ad
-      const methods = ['showRewardedVideo', 'showInterstitial', 'showRichAd', 'showAd'];
-      const result = await showAdWithPromise('Rich Ad', methods, 10000);
-      if (result) {
-        adStatusDiv.innerHTML = `✅ Rich ad completed! Now loading Telegram Playable Ad...`;
-      } else {
-        adStatusDiv.innerHTML = `⚠️ Rich ad skipped (fallback), continuing...`;
-      }
-      return result;
+      adStatusDiv.innerHTML = `📺 রিচ অ্যাড দেখানো হচ্ছে... দয়া করে অপেক্ষা করুন`;
+      const res = await showAdWithPromise('Rich Ad', ['showRewardedVideo', 'showInterstitial', 'showRichAd'], 10000);
+      if(res) adStatusDiv.innerHTML = `✅ রিচ অ্যাড শেষ! এখন প্লেবল অ্যাড...`;
+      else adStatusDiv.innerHTML = `⚠️ রিচ অ্যাড স্কিপড (কন্টিনিউ করা হচ্ছে)`;
+      return res;
     }
-    
-    // Show TELEGRAM PLAYABLE AD
-    async function showTelegramPlayableAd() {
-      adStatusDiv.innerHTML = `<i class="fas fa-gamepad"></i> Loading TELEGRAM PLAYABLE AD...`;
-      const methods = ['showPlayableAd', 'showPlayable', 'showInteractiveAd', 'showRewardedVideo'];
-      const result = await showAdWithPromise('Playable Ad', methods, 10000);
-      if (result) {
-        adStatusDiv.innerHTML = `🎮 Playable ad finished! You earned +1 point!`;
-      } else {
-        adStatusDiv.innerHTML = `🔄 Playable ad not shown (fallback), reward still given.`;
-      }
-      return result;
+    async function showPlayableAd() {
+      adStatusDiv.innerHTML = `🎮 টেলিগ্রাম প্লেবল অ্যাড লোড হচ্ছে...`;
+      const res = await showAdWithPromise('Playable Ad', ['showPlayableAd', 'showPlayable', 'showInteractiveAd'], 10000);
+      if(res) adStatusDiv.innerHTML = `🎉 প্লেবল অ্যাড সম্পূর্ণ! আপনি +1 পয়েন্ট পাবেন!`;
+      else adStatusDiv.innerHTML = `🔄 প্লেবল অ্যাড দেখানো সম্ভব হয়নি, তবুও রিওয়ার্ড দেওয়া হবে।`;
+      return res;
     }
-    
-    // MAIN SEQUENCE: Show both ads, then award point
-    let isAdSequenceRunning = false;
-    
-    async function handleStartWithAds() {
-      if (isAdSequenceRunning) {
-        adStatusDiv.innerHTML = `⏳ Ads already playing, please wait...`;
-        return;
-      }
+
+    async function handleStart() {
+      if (isAdSequenceRunning) { adStatusDiv.innerHTML = `⏳ আগের অ্যাড চলছে, একটু অপেক্ষা করুন`; return; }
       isAdSequenceRunning = true;
-      setLoadingState(true, "🎬 Preparing ads...");
-      
+      setLoading(true, "অ্যাড শুরু হচ্ছে...");
       try {
-        // 1. Show Rich Ad
         await showRichAd();
-        // short delay for smoothness
         await new Promise(r => setTimeout(r, 400));
-        
-        // 2. Show Telegram Playable Ad
-        await showTelegramPlayableAd();
-        
-        // 3. After both ads (or attempts) -> award +1 point
+        await showPlayableAd();
+        // অ্যাড দেখার পর পয়েন্ট +১
         currentPoints += 1;
         updateScoreUI();
         showFloatingPlus();
-        
-        // extra celebration effect on score panel
         const panel = document.querySelector('.score-pavilion');
-        if (panel) {
+        if(panel) {
           panel.style.borderColor = '#ffb347';
           panel.style.boxShadow = '0 0 18px rgba(255,180,70,0.6)';
-          setTimeout(() => {
-            panel.style.borderColor = 'rgba(255,215,0,0.25)';
-            panel.style.boxShadow = '';
-          }, 400);
+          setTimeout(() => { panel.style.borderColor = 'rgba(255,215,0,0.25)'; panel.style.boxShadow = ''; }, 400);
         }
-        adStatusDiv.innerHTML = `🎉 +1 point awarded! Thanks for watching ads. Click START again for more! 🎉`;
-        // reset status after 3 seconds
-        setTimeout(() => {
-          if (!isAdSequenceRunning) adStatusDiv.innerHTML = `✨ Click START → watch ads → earn points ✨`;
-        }, 3500);
-      } catch (err) {
-        console.error("Ad sequence error", err);
-        adStatusDiv.innerHTML = `⚠️ Ad error, but you still get +1 point as bonus! ⚠️`;
-        // still award point to avoid frustration
+        adStatusDiv.innerHTML = `🎉 +1 পয়েন্ট জিতেছেন! আবার Start চাপুন আরও পয়েন্টের জন্য 🎉`;
+        setTimeout(() => { if(!isAdSequenceRunning) adStatusDiv.innerHTML = `✨ Start → অ্যাড দেখুন → পয়েন্ট নিন ✨`; }, 3500);
+      } catch(err) {
+        console.error(err);
+        adStatusDiv.innerHTML = `⚠️ অ্যাডে সমস্যা, তবুও বোনাস হিসেবে +1 পয়েন্ট দেওয়া হলো ⚠️`;
         currentPoints += 1;
         updateScoreUI();
         showFloatingPlus();
       } finally {
         isAdSequenceRunning = false;
-        setLoadingState(false);
-        // ensure button re-enabled
+        setLoading(false);
         startBtn.disabled = false;
         startBtn.classList.remove('disabled-btn');
       }
     }
-    
-    // RESET logic with confirmation
+
     function resetScore() {
-      const confirmReset = confirm('⚠️ Reset all points to 0? Your progress will be cleared. ⚠️');
-      if (confirmReset) {
+      if(confirm('⚠️ আপনার সব পয়েন্ট রিসেট হবে। নিশ্চিত? ⚠️')) {
         currentPoints = 0;
         updateScoreUI();
-        const panel = document.querySelector('.score-pavilion');
-        if (panel) {
-          panel.style.transform = 'scale(0.98)';
-          setTimeout(() => panel.style.transform = '', 180);
-        }
-        adStatusDiv.innerHTML = `🔄 Score reset to 0. Start watching ads again! 🔄`;
-        setTimeout(() => {
-          if (!isAdSequenceRunning) adStatusDiv.innerHTML = `✨ Click START → watch ads → earn points ✨`;
-        }, 2000);
+        adStatusDiv.innerHTML = `🔄 স্কোর ০ করা হয়েছে। আবার অ্যাড দেখে পয়েন্ট জিতুন! 🔄`;
+        setTimeout(() => adStatusDiv.innerHTML = `✨ Start → অ্যাড দেখুন → পয়েন্ট নিন ✨`, 2000);
       }
     }
-    
-    // Event listeners
-    startBtn.addEventListener('click', handleStartWithAds);
+
+    startBtn.addEventListener('click', handleStart);
     resetBtn.addEventListener('click', resetScore);
-    
-    // smooth initial animation for card
-    const card = document.querySelector('.reward-card');
-    if (card) {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
-      setTimeout(() => {
-        card.style.transition = 'opacity 0.6s ease, transform 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-      }, 100);
-    }
-    
-    // Additional: show that Telegram WebApp is ready (design)
-    if (window.Telegram && Telegram.WebApp) {
-      Telegram.WebApp.ready();
-      Telegram.WebApp.expand();
-      console.log("Telegram WebApp ready for smooth ads");
-    }
-    
-    // log controller availability
-    console.log("Ads Controller:", window.TelegramAdsController ? "available ✅" : "missing ❌");
-    if (window.TelegramAdsController) {
-      // list available methods for debugging (optional)
-      const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(window.TelegramAdsController));
-      console.log("Available ad methods:", methods);
-    }
-    
-    // ensure that even if ads take too long, the button won't stay disabled permanently
-    window.addEventListener('load', () => {
-      setLoadingState(false);
-    });
-    
-    // add floating stars background extra smoothness
-    function generateStars() {
-      const starContainer = document.createElement('div');
-      starContainer.style.position = 'absolute';
-      starContainer.style.inset = '0';
-      starContainer.style.pointerEvents = 'none';
-      starContainer.style.zIndex = '0';
-      starContainer.style.overflow = 'hidden';
-      for (let i = 0; i < 100; i++) {
-        const star = document.createElement('div');
-        star.style.position = 'absolute';
-        star.style.backgroundColor = 'white';
-        star.style.width = Math.random() * 2.5 + 1 + 'px';
-        star.style.height = star.style.width;
-        star.style.borderRadius = '50%';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.opacity = Math.random() * 0.6 + 0.2;
-        star.style.animation = `twinkleStar ${Math.random() * 3 + 2}s infinite alternate`;
-        starContainer.appendChild(star);
-      }
-      document.body.appendChild(starContainer);
-    }
-    const styleStar = document.createElement('style');
-    styleStar.textContent = `@keyframes twinkleStar { 0% { opacity: 0.1; transform: scale(1); } 100% { opacity: 0.8; transform: scale(1.5); } }`;
-    document.head.appendChild(styleStar);
-    generateStars();
+    if(window.Telegram && Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+    console.log("Ads Controller ready with pubId 1008310");
   </script>
 </body>
 </html>
