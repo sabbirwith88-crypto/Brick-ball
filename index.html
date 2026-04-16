@@ -1,318 +1,64 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>🎯 অ্যাড রিওয়ার্ড + ডিবাগ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>Telegram Mini App Ads</title>
+
+  <!-- Telegram Web App -->
   <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
+
+  <!-- RichAds Script -->
   <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: radial-gradient(circle at 10% 20%, #0a0f1e, #02040c);
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    .card {
-      background: rgba(15, 25, 45, 0.75);
-      backdrop-filter: blur(14px);
-      border-radius: 2rem;
-      padding: 1.8rem;
-      max-width: 550px;
-      width: 100%;
-      text-align: center;
-      border: 1px solid rgba(255,215,0,0.3);
-      box-shadow: 0 20px 35px rgba(0,0,0,0.5);
-    }
-    h1 { font-size: 1.8rem; background: linear-gradient(135deg,#FFE6B0,#FFB347); background-clip:text; -webkit-background-clip:text; color:transparent; margin-bottom:0.5rem; }
-    .points { font-size: 4rem; font-weight: 900; background: linear-gradient(145deg,#FFF2CF,#FFCF7A); background-clip:text; -webkit-background-clip:text; color:transparent; margin:1rem 0; }
-    button {
-      background: linear-gradient(125deg, #f09b42, #cf511c);
-      border: none;
-      padding: 0.9rem 2rem;
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: white;
-      border-radius: 60px;
-      cursor: pointer;
-      box-shadow: 0 8px 0 #6e2c0e;
-      transition: 0.07s linear;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      margin: 10px 0;
-    }
-    button:active { transform: translateY(4px); box-shadow: 0 4px 0 #6e2c0e; }
-    .reset-btn {
-      background: #2a3a55;
-      box-shadow: 0 5px 0 #11181f;
-      font-size: 1rem;
-      padding: 0.6rem 1.4rem;
-    }
-    .debug-box {
-      background: #000000aa;
-      border-radius: 1rem;
-      padding: 0.8rem;
-      margin-top: 1.2rem;
-      text-align: left;
-      font-size: 0.75rem;
-      color: #bbffaa;
-      font-family: monospace;
-      max-height: 200px;
-      overflow-y: auto;
-      border: 1px solid #ffb34766;
-    }
-    .status { margin: 10px 0; font-size: 0.85rem; color: #ffdd99; background: #00000066; display: inline-block; padding: 4px 12px; border-radius: 30px; }
-    .footer { font-size: 0.7rem; color: #9aa9c4; margin-top: 1rem; }
-  </style>
 </head>
+
 <body>
-<div class="card">
-  <h1><i class="fas fa-ad"></i> অ্যাড রিওয়ার্ড <i class="fas fa-gamepad"></i></h1>
-  <div class="status" id="adStatus">🔍 অ্যাড কন্ট্রোলার চেক করা হচ্ছে...</div>
-  <div class="points" id="pointDisplay">0</div>
-  <div style="position: relative;" id="btnWrapper">
-    <button id="startBtn"><i class="fas fa-play"></i> START & অ্যাড দেখুন</button>
-  </div>
-  <button id="resetBtn" class="reset-btn"><i class="fas fa-undo"></i> রিসেট পয়েন্ট</button>
-  <div class="debug-box" id="debugLog">
-    📡 [লগ] পেজ লোড হয়েছে<br>
-  </div>
-  <div class="footer">⚡ Start চাপলে রিচ অ্যাড + প্লেবল অ্যাড দেখাবে → সফল হলে +1 পয়েন্ট</div>
-</div>
 
-<script>
-  // ----------------- ডিবাগ লগ ফাংশন ----------------
-  let currentPoints = 0;
-  const pointDisplay = document.getElementById('pointDisplay');
-  const startBtn = document.getElementById('startBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  const adStatusSpan = document.getElementById('adStatus');
-  const debugBox = document.getElementById('debugLog');
-  let isAdRunning = false;
+  <h2>Play & Earn</h2>
 
-  function addLog(msg, isError = false) {
-    const line = document.createElement('div');
-    line.innerHTML = `🕒 ${new Date().toLocaleTimeString()} → ${msg}`;
-    line.style.color = isError ? '#ffaa88' : '#bbffaa';
-    debugBox.appendChild(line);
-    debugBox.scrollTop = debugBox.scrollHeight;
-    console.log(msg);
-  }
+  <!-- Button -->
+  <button onclick="showRewardAd()">🎮 Play Game (Watch Ad)</button>
 
-  function updatePointsUI() {
-    pointDisplay.innerText = currentPoints;
-    pointDisplay.style.transform = 'scale(1.15)';
-    setTimeout(() => pointDisplay.style.transform = '', 150);
-  }
-
-  function showFloatingPlus() {
-    const wrapper = document.getElementById('btnWrapper');
-    if (!wrapper) return;
-    const el = document.createElement('div');
-    el.innerText = '+1 ✨';
-    el.style.position = 'absolute';
-    el.style.bottom = '100%';
-    el.style.left = '50%';
-    el.style.transform = 'translateX(-50%)';
-    el.style.background = '#ffaa33';
-    el.style.color = '#2d1b00';
-    el.style.fontWeight = 'bold';
-    el.style.padding = '4px 12px';
-    el.style.borderRadius = '40px';
-    el.style.whiteSpace = 'nowrap';
-    el.style.animation = 'floatUp 0.8s forwards';
-    wrapper.appendChild(el);
-    setTimeout(() => el.remove(), 800);
-  }
-
-  // add keyframes dynamically
-  const style = document.createElement('style');
-  style.textContent = `@keyframes floatUp { 0% { opacity:1; bottom:100%; } 100% { opacity:0; bottom:180%; } }`;
-  document.head.appendChild(style);
-
-  // ---------- অ্যাড কন্ট্রোলার ডিটেক্ট ও টেস্ট ----------
-  let adsController = null;
-  let availableMethods = [];
-
-  function inspectController() {
-    if (typeof window.TelegramAdsController !== 'undefined' && window.TelegramAdsController) {
-      adsController = window.TelegramAdsController;
-      addLog('✅ TelegramAdsController পাওয়া গেছে!');
-      // check methods
-      const proto = Object.getPrototypeOf(adsController);
-      let methods = [];
-      if (proto) {
-        methods = Object.getOwnPropertyNames(proto).filter(n => typeof adsController[n] === 'function');
-      }
-      if (methods.length === 0) {
-        // fallback: check own properties
-        methods = Object.getOwnPropertyNames(adsController).filter(n => typeof adsController[n] === 'function');
-      }
-      availableMethods = methods;
-      addLog(`📋 উপলব্ধ মেথডসমূহ: ${methods.join(', ') || 'কোনটি পেলাম না'}`);
-      if (methods.includes('showRewardedVideo')) addLog('🎬 showRewardedVideo আছে');
-      if (methods.includes('showPlayableAd')) addLog('🎮 showPlayableAd আছে');
-      if (methods.includes('showInterstitial')) addLog('📺 showInterstitial আছে');
-      adStatusSpan.innerHTML = '✅ অ্যাড রেডি (টেলিগ্রামে ওপেন করুন)';
-    } else {
-      addLog('❌ TelegramAdsController অবজেক্ট খুঁজে পাওয়া যায়নি!', true);
-      adStatusSpan.innerHTML = '⚠️ কন্ট্রোলার নেই → টেলিগ্রামে ওপেন করেননি?';
-    }
-  }
-
-  // try to call ad using best available method
-  function callAdMethod(methodName, timeoutMs = 8000) {
-    return new Promise((resolve) => {
-      if (!adsController || typeof adsController[methodName] !== 'function') {
-        addLog(`❌ ${methodName} ফাংশন নেই`, true);
-        resolve(false);
-        return;
-      }
-      addLog(`📢 কল করছি: ${methodName} ...`);
-      let resolved = false;
-      const timer = setTimeout(() => {
-        if (!resolved) {
-          addLog(`⏰ ${methodName} টাইমআউট (${timeoutMs}ms)`, true);
-          resolved = true;
-          resolve(false);
-        }
-      }, timeoutMs);
-      try {
-        // Most ad methods expect a callback (success/fail)
-        adsController[methodName]((result) => {
-          if (!resolved) {
-            resolved = true;
-            clearTimeout(timer);
-            addLog(`✅ ${methodName} কল রেজাল্ট: ${result}`);
-            resolve(true);
-          }
-        });
-      } catch (e) {
-        if (!resolved) {
-          resolved = true;
-          clearTimeout(timer);
-          addLog(`⚠️ ${methodName} কল করার সময় এরর: ${e.message}`, true);
-          resolve(false);
-        }
-      }
+  <script>
+    // Init Ads
+    window.TelegramAdsController = new TelegramAdsController();
+    window.TelegramAdsController.initialize({
+      pubId: "1008310",
+      appId: "7019",
     });
-  }
 
-  // main sequence: rich ad + playable ad (try multiple names)
-  async function showBothAds() {
-    // 1. Rich Ad (try rewarded or interstitial)
-    let richSuccess = false;
-    const richCandidates = ['showRewardedVideo', 'showInterstitial', 'showRichAd', 'showAd'];
-    for (let method of richCandidates) {
-      if (availableMethods.includes(method)) {
-        richSuccess = await callAdMethod(method, 10000);
-        if (richSuccess) break;
-      }
-    }
-    if (!richSuccess) addLog('⚠️ রিচ অ্যাড দেখাতে ব্যর্থ (বা ইউজার বাদ দিয়েছে)', true);
-    else addLog('🎉 রিচ অ্যাড সম্পন্ন হয়েছে');
+    // Rewarded Ad Function
+    function showRewardAd() {
+      window.TelegramAdsController.showAd({
+        format: 'rewarded',
 
-    await new Promise(r => setTimeout(r, 500));
+        onOpen: () => {
+          console.log("Ad Started");
+        },
 
-    // 2. Playable Ad (Telegram)
-    let playableSuccess = false;
-    const playCandidates = ['showPlayableAd', 'showPlayable', 'showInteractiveAd', 'showRewardedVideo']; // fallback
-    for (let method of playCandidates) {
-      if (availableMethods.includes(method)) {
-        playableSuccess = await callAdMethod(method, 10000);
-        if (playableSuccess) break;
-      }
-    }
-    if (!playableSuccess) addLog('⚠️ প্লেবল অ্যাড দেখাতে ব্যর্থ', true);
-    else addLog('🎮 প্লেবল অ্যাড সম্পন্ন হয়েছে');
-    
-    return { richSuccess, playableSuccess };
-  }
+        onClose: () => {
+          console.log("Ad Closed");
+          rewardUser();
+        },
 
-  // start button handler
-  async function onStartClick() {
-    if (isAdRunning) {
-      addLog('⏳ আগের অ্যাড প্রক্রিয়া এখনো চলছে, অপেক্ষা করুন');
-      adStatusSpan.innerHTML = '⏳ অ্যাড চলছে, দয়া করে অপেক্ষা করুন...';
-      return;
-    }
-    isAdRunning = true;
-    startBtn.disabled = true;
-    startBtn.style.opacity = '0.6';
-    adStatusSpan.innerHTML = '📢 অ্যাড দেখানো শুরু হচ্ছে...';
-    
-    try {
-      if (!adsController) {
-        addLog('❌ কন্ট্রোলার নেই, মক অ্যাড হিসেবে +1 পয়েন্ট দেওয়া হলো (টেস্ট মোড)', true);
-        adStatusSpan.innerHTML = '🔁 কন্ট্রোলার নেই → টেস্ট পয়েন্ট +1';
-        currentPoints += 1;
-        updatePointsUI();
-        showFloatingPlus();
-        isAdRunning = false;
-        startBtn.disabled = false;
-        startBtn.style.opacity = '1';
-        return;
-      }
-      
-      // real ad sequence
-      const { richSuccess, playableSuccess } = await showBothAds();
-      
-      if (richSuccess || playableSuccess) {
-        // যদি অন্তত একটি অ্যাড সফল হয় তাহলে পয়েন্ট দিন
-        currentPoints += 1;
-        updatePointsUI();
-        showFloatingPlus();
-        addLog(`🎁 রিওয়ার্ড দেওয়া হলো! মোট পয়েন্ট ${currentPoints}`);
-        adStatusSpan.innerHTML = '🎉 অ্যাড দেখা হয়েছে! +1 পয়েন্ট পেলেন';
-      } else {
-        // কোন অ্যাড ই কাজ করল না — তবুও পয়েন্ট না দেওয়াই ভাল, তবে ইউজারকে জানান
-        addLog('❌ দুটো অ্যাডই দেখাতে ব্যর্থ, পয়েন্ট দেওয়া হয়নি', true);
-        adStatusSpan.innerHTML = '❌ অ্যাড লোড হয়নি। নেটওয়ার্ক বা কনফিগ চেক করুন।';
-      }
-    } catch (err) {
-      addLog(`🔥 ক্রিটিক্যাল এরর: ${err.message}`, true);
-      adStatusSpan.innerHTML = '⚠️ অ্যাড সিস্টেমে সমস্যা, পরে চেষ্টা করুন';
-    } finally {
-      isAdRunning = false;
-      startBtn.disabled = false;
-      startBtn.style.opacity = '1';
-      setTimeout(() => {
-        if (adStatusSpan.innerHTML.includes('পয়েন্ট')) {
-          adStatusSpan.innerHTML = '✅ প্রস্তুত। Start চাপুন অ্যাড দেখতে';
+        onError: (err) => {
+          console.log("Ad Error:", err);
+          alert("Ad not available এখন");
         }
-      }, 2500);
+      });
     }
-  }
 
-  function resetPoints() {
-    if (confirm('পয়েন্ট রিসেট করবেন? ০ হয়ে যাবে')) {
-      currentPoints = 0;
-      updatePointsUI();
-      addLog('🔁 পয়েন্ট রিসেট করা হয়েছে');
-      adStatusSpan.innerHTML = '🔄 রিসেট হয়েছে। আবার Start করুন';
+    // Reward System
+    function rewardUser() {
+      alert("✅ You earned reward!");
+
+      // Example: coin add
+      let coins = localStorage.getItem("coins") || 0;
+      coins = parseInt(coins) + 10;
+      localStorage.setItem("coins", coins);
+
+      console.log("Total Coins:", coins);
     }
-  }
+  </script>
 
-  // initialize
-  inspectController();
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-    addLog('📱 টেলিগ্রাম ওয়েব অ্যাপ রেডি');
-  } else {
-    addLog('⚠️ টেলিগ্রাম ওয়েব অ্যাপ ডিটেক্ট হয়নি (ব্রাউজারে খুলেছেন?)', true);
-  }
-
-  startBtn.addEventListener('click', onStartClick);
-  resetBtn.addEventListener('click', resetPoints);
-  updatePointsUI();
-</script>
 </body>
 </html>
