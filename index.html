@@ -1,363 +1,318 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>✨ অ্যাড রিওয়ার্ড | Start → অ্যাড দেখুন → +1 পয়েন্ট ✨</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;500;700;800;900&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>🎯 অ্যাড রিওয়ার্ড + ডিবাগ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  <!-- টেলিগ্রাম ও রিচ অ্যাড স্ক্রিপ্ট (আপনার দেওয়া pubId সহ) -->
   <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
   <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-  <script>
-    window.TelegramAdsController = new TelegramAdsController();
-    window.TelegramAdsController.initialize({
-      pubId: "1008310",
-      appId: "7019",
-    });
-  </script>
-
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      min-height: 100vh;
-      background: radial-gradient(ellipse at 30% 40%, #0a0f1e, #02040c);
+      background: radial-gradient(circle at 10% 20%, #0a0f1e, #02040c);
       font-family: 'Inter', sans-serif;
       display: flex;
-      align-items: center;
       justify-content: center;
-      position: relative;
-      overflow-x: hidden;
+      align-items: center;
+      min-height: 100vh;
       padding: 1rem;
     }
-    /* স্মুথ অর্বস */
-    .smooth-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.35;
-      pointer-events: none;
-      animation: smoothFloat 20s infinite alternate ease-in-out;
-      z-index: 0;
-    }
-    .orb1 { width: 400px; height: 400px; background: #ff4d6d; top: -150px; left: -100px; }
-    .orb2 { width: 500px; height: 500px; background: #3b82f6; bottom: -200px; right: -120px; animation-duration: 25s; }
-    .orb3 { width: 300px; height: 300px; background: #facc15; top: 50%; left: 70%; filter: blur(110px); opacity: 0.25; }
-    .orb4 { width: 220px; height: 220px; background: #c084fc; bottom: 5%; left: 5%; filter: blur(70px); }
-    @keyframes smoothFloat {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(30px, -30px) scale(1.15); }
-    }
-    .grid-lines {
-      position: absolute;
+    .card {
+      background: rgba(15, 25, 45, 0.75);
+      backdrop-filter: blur(14px);
+      border-radius: 2rem;
+      padding: 1.8rem;
+      max-width: 550px;
       width: 100%;
-      height: 100%;
-      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 55px 55px;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .reward-card {
-      background: rgba(12, 20, 35, 0.65);
-      backdrop-filter: blur(16px);
-      border-radius: 3.5rem;
-      padding: 2rem 2rem 2.2rem;
-      width: 100%;
-      max-width: 640px;
       text-align: center;
-      box-shadow: 0 35px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,210,0.12), 0 0 28px rgba(0, 255, 255, 0.15);
-      transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      z-index: 10;
-      border: 1px solid rgba(255,245,200,0.2);
+      border: 1px solid rgba(255,215,0,0.3);
+      box-shadow: 0 20px 35px rgba(0,0,0,0.5);
     }
-    .glow-header {
-      font-size: 2.5rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #FFE6C0, #FFB347, #FF7A5C);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .sub-badge {
-      background: rgba(255,200,100,0.15);
-      backdrop-filter: blur(4px);
-      display: inline-block;
-      padding: 0.3rem 1.2rem;
-      border-radius: 60px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #ffdeae;
-      border: 1px solid rgba(255,215,0,0.4);
-      margin-bottom: 1.5rem;
-    }
-    .score-pavilion {
-      background: rgba(0, 0, 0, 0.45);
-      border-radius: 2.5rem;
-      padding: 0.8rem 1.5rem;
-      margin: 1.2rem 0;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255,215,0,0.25);
-      transition: all 0.2s ease;
-    }
-    .score-number {
-      font-size: 5rem;
-      font-weight: 900;
-      background: linear-gradient(145deg, #FFF2CF, #FFCF7A);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      line-height: 1.1;
-      transition: transform 0.12s cubic-bezier(0.34, 1.2, 0.64, 1);
-      display: inline-block;
-    }
-    .score-pop { transform: scale(1.18); text-shadow: 0 0 18px #ffb347; }
-    .start-btn {
+    h1 { font-size: 1.8rem; background: linear-gradient(135deg,#FFE6B0,#FFB347); background-clip:text; -webkit-background-clip:text; color:transparent; margin-bottom:0.5rem; }
+    .points { font-size: 4rem; font-weight: 900; background: linear-gradient(145deg,#FFF2CF,#FFCF7A); background-clip:text; -webkit-background-clip:text; color:transparent; margin:1rem 0; }
+    button {
       background: linear-gradient(125deg, #f09b42, #cf511c);
       border: none;
-      padding: 1rem 2.4rem;
-      font-size: 1.8rem;
-      font-weight: 800;
-      font-family: 'Inter', sans-serif;
+      padding: 0.9rem 2rem;
+      font-size: 1.4rem;
+      font-weight: bold;
       color: white;
-      border-radius: 100px;
-      cursor: pointer;
-      box-shadow: 0 12px 0 #6e2c0e;
-      transition: all 0.08s linear;
-      display: inline-flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #6e2c0e; }
-    .start-btn.disabled-btn, .start-btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      pointer-events: none;
-      transform: translateY(0);
-    }
-    .reset-btn {
-      background: rgba(20, 30, 55, 0.8);
-      border: 1px solid rgba(255, 210, 120, 0.6);
-      backdrop-filter: blur(6px);
-      padding: 0.7rem 1.8rem;
-      font-size: 1rem;
-      font-weight: 600;
       border-radius: 60px;
-      color: #ffe1aa;
       cursor: pointer;
-      transition: 0.2s;
-      margin-top: 1rem;
+      box-shadow: 0 8px 0 #6e2c0e;
+      transition: 0.07s linear;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      margin: 10px 0;
     }
-    .reset-btn:hover { background: rgba(45, 60, 90, 0.9); transform: scale(0.97); }
-    .footer-note {
-      margin-top: 1.8rem;
-      font-size: 0.7rem;
-      color: #8e9bb5;
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      border-top: 1px dashed rgba(255,215,0,0.25);
-      padding-top: 1rem;
+    button:active { transform: translateY(4px); box-shadow: 0 4px 0 #6e2c0e; }
+    .reset-btn {
+      background: #2a3a55;
+      box-shadow: 0 5px 0 #11181f;
+      font-size: 1rem;
+      padding: 0.6rem 1.4rem;
     }
-    .float-plus-ad {
-      position: absolute;
-      bottom: 110%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: radial-gradient(circle, #ffdd88, #ffaa44);
-      color: #2d1b00;
-      font-weight: 900;
-      font-size: 1.6rem;
-      padding: 0.2rem 1rem;
-      border-radius: 50px;
-      white-space: nowrap;
-      pointer-events: none;
-      box-shadow: 0 4px 12px black;
-      animation: floatUpFade 0.85s forwards;
-      z-index: 200;
+    .debug-box {
+      background: #000000aa;
+      border-radius: 1rem;
+      padding: 0.8rem;
+      margin-top: 1.2rem;
+      text-align: left;
+      font-size: 0.75rem;
+      color: #bbffaa;
+      font-family: monospace;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ffb34766;
     }
-    @keyframes floatUpFade {
-      0% { opacity: 1; bottom: 100%; transform: translateX(-50%) scale(0.7);}
-      40% { opacity: 1; transform: translateX(-50%) scale(1.2);}
-      100% { opacity: 0; bottom: 170%; transform: translateX(-50%) scale(0.9);}
-    }
-    .ad-status {
-      font-size: 0.8rem;
-      margin-top: 12px;
-      color: #ffd58c;
-      background: rgba(0,0,0,0.5);
-      display: inline-block;
-      padding: 4px 14px;
-      border-radius: 40px;
-    }
-    @media (max-width: 550px) {
-      .reward-card { padding: 1.5rem; }
-      .glow-header { font-size: 1.9rem; }
-      .score-number { font-size: 3.8rem; }
-      .start-btn { padding: 0.8rem 1.5rem; font-size: 1.4rem; }
-    }
+    .status { margin: 10px 0; font-size: 0.85rem; color: #ffdd99; background: #00000066; display: inline-block; padding: 4px 12px; border-radius: 30px; }
+    .footer { font-size: 0.7rem; color: #9aa9c4; margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <div class="smooth-orb orb1"></div><div class="smooth-orb orb2"></div>
-  <div class="smooth-orb orb3"></div><div class="smooth-orb orb4"></div>
-  <div class="grid-lines"></div>
+<div class="card">
+  <h1><i class="fas fa-ad"></i> অ্যাড রিওয়ার্ড <i class="fas fa-gamepad"></i></h1>
+  <div class="status" id="adStatus">🔍 অ্যাড কন্ট্রোলার চেক করা হচ্ছে...</div>
+  <div class="points" id="pointDisplay">0</div>
+  <div style="position: relative;" id="btnWrapper">
+    <button id="startBtn"><i class="fas fa-play"></i> START & অ্যাড দেখুন</button>
+  </div>
+  <button id="resetBtn" class="reset-btn"><i class="fas fa-undo"></i> রিসেট পয়েন্ট</button>
+  <div class="debug-box" id="debugLog">
+    📡 [লগ] পেজ লোড হয়েছে<br>
+  </div>
+  <div class="footer">⚡ Start চাপলে রিচ অ্যাড + প্লেবল অ্যাড দেখাবে → সফল হলে +1 পয়েন্ট</div>
+</div>
 
-  <main class="reward-card">
-    <div class="glow-header"><i class="fas fa-trophy"></i> <span>অ্যাড রিওয়ার্ড জোন</span> <i class="fas fa-film"></i></div>
-    <div class="sub-badge"><i class="fas fa-play-circle"></i> অ্যাড দেখুন → পয়েন্ট জিতুন</div>
+<script>
+  // ----------------- ডিবাগ লগ ফাংশন ----------------
+  let currentPoints = 0;
+  const pointDisplay = document.getElementById('pointDisplay');
+  const startBtn = document.getElementById('startBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const adStatusSpan = document.getElementById('adStatus');
+  const debugBox = document.getElementById('debugLog');
+  let isAdRunning = false;
 
-    <div class="score-pavilion" id="scorePanel">
-      <div class="score-label" style="font-size:1rem; color:#ffdd99;"><i class="fas fa-coins"></i> আপনার পয়েন্ট</div>
-      <div class="score-number" id="pointDisplay">0</div>
-    </div>
+  function addLog(msg, isError = false) {
+    const line = document.createElement('div');
+    line.innerHTML = `🕒 ${new Date().toLocaleTimeString()} → ${msg}`;
+    line.style.color = isError ? '#ffaa88' : '#bbffaa';
+    debugBox.appendChild(line);
+    debugBox.scrollTop = debugBox.scrollHeight;
+    console.log(msg);
+  }
 
-    <div style="position:relative; display:inline-block; margin:0.8rem 0 0.5rem;" id="startWrapper">
-      <button class="start-btn" id="startBtn"><i class="fas fa-play"></i> START & অ্যাড দেখুন <i class="fas fa-ad"></i></button>
-    </div>
-    <div id="adStatusMsg" class="ad-status">✨ Start ক্লিক করলেই রিচ অ্যাড + প্লেবল অ্যাড দেখাবে → +1 পয়েন্ট ✨</div>
+  function updatePointsUI() {
+    pointDisplay.innerText = currentPoints;
+    pointDisplay.style.transform = 'scale(1.15)';
+    setTimeout(() => pointDisplay.style.transform = '', 150);
+  }
 
-    <div><button class="reset-btn" id="resetBtn"><i class="fas fa-broom"></i> রিসেট স্কোর</button></div>
-    <div class="footer-note"><span><i class="fas fa-bolt"></i> ১টি অ্যাড ভিউ = ১ পয়েন্ট</span><span><i class="fas fa-mobile-alt"></i> টেলিগ্রাম প্লেবল + রিচ</span></div>
-  </main>
+  function showFloatingPlus() {
+    const wrapper = document.getElementById('btnWrapper');
+    if (!wrapper) return;
+    const el = document.createElement('div');
+    el.innerText = '+1 ✨';
+    el.style.position = 'absolute';
+    el.style.bottom = '100%';
+    el.style.left = '50%';
+    el.style.transform = 'translateX(-50%)';
+    el.style.background = '#ffaa33';
+    el.style.color = '#2d1b00';
+    el.style.fontWeight = 'bold';
+    el.style.padding = '4px 12px';
+    el.style.borderRadius = '40px';
+    el.style.whiteSpace = 'nowrap';
+    el.style.animation = 'floatUp 0.8s forwards';
+    wrapper.appendChild(el);
+    setTimeout(() => el.remove(), 800);
+  }
 
-  <script>
-    let currentPoints = 0;
-    const pointDisplay = document.getElementById('pointDisplay');
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const adStatusDiv = document.getElementById('adStatusMsg');
-    let isAdSequenceRunning = false;
+  // add keyframes dynamically
+  const style = document.createElement('style');
+  style.textContent = `@keyframes floatUp { 0% { opacity:1; bottom:100%; } 100% { opacity:0; bottom:180%; } }`;
+  document.head.appendChild(style);
 
-    function updateScoreUI() {
-      pointDisplay.innerText = currentPoints;
-      pointDisplay.classList.add('score-pop');
-      setTimeout(() => pointDisplay.classList.remove('score-pop'), 160);
-    }
-    function showFloatingPlus() {
-      const wrapper = document.getElementById('startWrapper');
-      if (!wrapper) return;
-      const floatEl = document.createElement('div');
-      floatEl.className = 'float-plus-ad';
-      floatEl.innerHTML = '✨ +1 পয়েন্ট ✨';
-      wrapper.appendChild(floatEl);
-      floatEl.addEventListener('animationend', () => floatEl.remove());
-      setTimeout(() => floatEl.remove(), 900);
-    }
-    function setLoading(loading, msg = null) {
-      if (loading) {
-        startBtn.disabled = true;
-        startBtn.classList.add('disabled-btn');
-        adStatusDiv.innerHTML = msg ? `<i class="fas fa-spinner fa-pulse"></i> ${msg}` : `<i class="fas fa-hourglass-half"></i> অ্যাড লোড হচ্ছে...`;
-      } else {
-        startBtn.disabled = false;
-        startBtn.classList.remove('disabled-btn');
-        adStatusDiv.innerHTML = `✅ প্রস্তুত! Start চাপুন → অ্যাড দেখে পয়েন্ট নিন ✅`;
+  // ---------- অ্যাড কন্ট্রোলার ডিটেক্ট ও টেস্ট ----------
+  let adsController = null;
+  let availableMethods = [];
+
+  function inspectController() {
+    if (typeof window.TelegramAdsController !== 'undefined' && window.TelegramAdsController) {
+      adsController = window.TelegramAdsController;
+      addLog('✅ TelegramAdsController পাওয়া গেছে!');
+      // check methods
+      const proto = Object.getPrototypeOf(adsController);
+      let methods = [];
+      if (proto) {
+        methods = Object.getOwnPropertyNames(proto).filter(n => typeof adsController[n] === 'function');
       }
+      if (methods.length === 0) {
+        // fallback: check own properties
+        methods = Object.getOwnPropertyNames(adsController).filter(n => typeof adsController[n] === 'function');
+      }
+      availableMethods = methods;
+      addLog(`📋 উপলব্ধ মেথডসমূহ: ${methods.join(', ') || 'কোনটি পেলাম না'}`);
+      if (methods.includes('showRewardedVideo')) addLog('🎬 showRewardedVideo আছে');
+      if (methods.includes('showPlayableAd')) addLog('🎮 showPlayableAd আছে');
+      if (methods.includes('showInterstitial')) addLog('📺 showInterstitial আছে');
+      adStatusSpan.innerHTML = '✅ অ্যাড রেডি (টেলিগ্রামে ওপেন করুন)';
+    } else {
+      addLog('❌ TelegramAdsController অবজেক্ট খুঁজে পাওয়া যায়নি!', true);
+      adStatusSpan.innerHTML = '⚠️ কন্ট্রোলার নেই → টেলিগ্রামে ওপেন করেননি?';
     }
+  }
 
-    // অ্যাড দেখানোর হেল্পার (Rich + Playable)
-    function showAdWithPromise(adTypeName, methodNames, timeoutMs = 10000) {
-      return new Promise((resolve) => {
-        if (!window.TelegramAdsController) {
-          console.warn(`${adTypeName} অ্যাভেইলেবল না`);
+  // try to call ad using best available method
+  function callAdMethod(methodName, timeoutMs = 8000) {
+    return new Promise((resolve) => {
+      if (!adsController || typeof adsController[methodName] !== 'function') {
+        addLog(`❌ ${methodName} ফাংশন নেই`, true);
+        resolve(false);
+        return;
+      }
+      addLog(`📢 কল করছি: ${methodName} ...`);
+      let resolved = false;
+      const timer = setTimeout(() => {
+        if (!resolved) {
+          addLog(`⏰ ${methodName} টাইমআউট (${timeoutMs}ms)`, true);
+          resolved = true;
           resolve(false);
-          return;
         }
-        let tried = false;
-        const tid = setTimeout(() => {
-          if (!tried) { console.warn(`${adTypeName} টাইমআউট`); resolve(false); }
-        }, timeoutMs);
-        let methodToCall = null;
-        for (let m of methodNames) {
-          if (typeof window.TelegramAdsController[m] === 'function') { methodToCall = m; break; }
-        }
-        if (!methodToCall) { clearTimeout(tid); resolve(false); return; }
-        try {
-          window.TelegramAdsController[methodToCall]((success) => {
-            if (!tried) { tried = true; clearTimeout(tid); resolve(true); }
-          });
-        } catch(e) { clearTimeout(tid); resolve(false); }
-      });
-    }
-
-    async function showRichAd() {
-      adStatusDiv.innerHTML = `📺 রিচ অ্যাড দেখানো হচ্ছে... দয়া করে অপেক্ষা করুন`;
-      const res = await showAdWithPromise('Rich Ad', ['showRewardedVideo', 'showInterstitial', 'showRichAd'], 10000);
-      if(res) adStatusDiv.innerHTML = `✅ রিচ অ্যাড শেষ! এখন প্লেবল অ্যাড...`;
-      else adStatusDiv.innerHTML = `⚠️ রিচ অ্যাড স্কিপড (কন্টিনিউ করা হচ্ছে)`;
-      return res;
-    }
-    async function showPlayableAd() {
-      adStatusDiv.innerHTML = `🎮 টেলিগ্রাম প্লেবল অ্যাড লোড হচ্ছে...`;
-      const res = await showAdWithPromise('Playable Ad', ['showPlayableAd', 'showPlayable', 'showInteractiveAd'], 10000);
-      if(res) adStatusDiv.innerHTML = `🎉 প্লেবল অ্যাড সম্পূর্ণ! আপনি +1 পয়েন্ট পাবেন!`;
-      else adStatusDiv.innerHTML = `🔄 প্লেবল অ্যাড দেখানো সম্ভব হয়নি, তবুও রিওয়ার্ড দেওয়া হবে।`;
-      return res;
-    }
-
-    async function handleStart() {
-      if (isAdSequenceRunning) { adStatusDiv.innerHTML = `⏳ আগের অ্যাড চলছে, একটু অপেক্ষা করুন`; return; }
-      isAdSequenceRunning = true;
-      setLoading(true, "অ্যাড শুরু হচ্ছে...");
+      }, timeoutMs);
       try {
-        await showRichAd();
-        await new Promise(r => setTimeout(r, 400));
-        await showPlayableAd();
-        // অ্যাড দেখার পর পয়েন্ট +১
-        currentPoints += 1;
-        updateScoreUI();
-        showFloatingPlus();
-        const panel = document.querySelector('.score-pavilion');
-        if(panel) {
-          panel.style.borderColor = '#ffb347';
-          panel.style.boxShadow = '0 0 18px rgba(255,180,70,0.6)';
-          setTimeout(() => { panel.style.borderColor = 'rgba(255,215,0,0.25)'; panel.style.boxShadow = ''; }, 400);
+        // Most ad methods expect a callback (success/fail)
+        adsController[methodName]((result) => {
+          if (!resolved) {
+            resolved = true;
+            clearTimeout(timer);
+            addLog(`✅ ${methodName} কল রেজাল্ট: ${result}`);
+            resolve(true);
+          }
+        });
+      } catch (e) {
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(timer);
+          addLog(`⚠️ ${methodName} কল করার সময় এরর: ${e.message}`, true);
+          resolve(false);
         }
-        adStatusDiv.innerHTML = `🎉 +1 পয়েন্ট জিতেছেন! আবার Start চাপুন আরও পয়েন্টের জন্য 🎉`;
-        setTimeout(() => { if(!isAdSequenceRunning) adStatusDiv.innerHTML = `✨ Start → অ্যাড দেখুন → পয়েন্ট নিন ✨`; }, 3500);
-      } catch(err) {
-        console.error(err);
-        adStatusDiv.innerHTML = `⚠️ অ্যাডে সমস্যা, তবুও বোনাস হিসেবে +1 পয়েন্ট দেওয়া হলো ⚠️`;
+      }
+    });
+  }
+
+  // main sequence: rich ad + playable ad (try multiple names)
+  async function showBothAds() {
+    // 1. Rich Ad (try rewarded or interstitial)
+    let richSuccess = false;
+    const richCandidates = ['showRewardedVideo', 'showInterstitial', 'showRichAd', 'showAd'];
+    for (let method of richCandidates) {
+      if (availableMethods.includes(method)) {
+        richSuccess = await callAdMethod(method, 10000);
+        if (richSuccess) break;
+      }
+    }
+    if (!richSuccess) addLog('⚠️ রিচ অ্যাড দেখাতে ব্যর্থ (বা ইউজার বাদ দিয়েছে)', true);
+    else addLog('🎉 রিচ অ্যাড সম্পন্ন হয়েছে');
+
+    await new Promise(r => setTimeout(r, 500));
+
+    // 2. Playable Ad (Telegram)
+    let playableSuccess = false;
+    const playCandidates = ['showPlayableAd', 'showPlayable', 'showInteractiveAd', 'showRewardedVideo']; // fallback
+    for (let method of playCandidates) {
+      if (availableMethods.includes(method)) {
+        playableSuccess = await callAdMethod(method, 10000);
+        if (playableSuccess) break;
+      }
+    }
+    if (!playableSuccess) addLog('⚠️ প্লেবল অ্যাড দেখাতে ব্যর্থ', true);
+    else addLog('🎮 প্লেবল অ্যাড সম্পন্ন হয়েছে');
+    
+    return { richSuccess, playableSuccess };
+  }
+
+  // start button handler
+  async function onStartClick() {
+    if (isAdRunning) {
+      addLog('⏳ আগের অ্যাড প্রক্রিয়া এখনো চলছে, অপেক্ষা করুন');
+      adStatusSpan.innerHTML = '⏳ অ্যাড চলছে, দয়া করে অপেক্ষা করুন...';
+      return;
+    }
+    isAdRunning = true;
+    startBtn.disabled = true;
+    startBtn.style.opacity = '0.6';
+    adStatusSpan.innerHTML = '📢 অ্যাড দেখানো শুরু হচ্ছে...';
+    
+    try {
+      if (!adsController) {
+        addLog('❌ কন্ট্রোলার নেই, মক অ্যাড হিসেবে +1 পয়েন্ট দেওয়া হলো (টেস্ট মোড)', true);
+        adStatusSpan.innerHTML = '🔁 কন্ট্রোলার নেই → টেস্ট পয়েন্ট +1';
         currentPoints += 1;
-        updateScoreUI();
+        updatePointsUI();
         showFloatingPlus();
-      } finally {
-        isAdSequenceRunning = false;
-        setLoading(false);
+        isAdRunning = false;
         startBtn.disabled = false;
-        startBtn.classList.remove('disabled-btn');
+        startBtn.style.opacity = '1';
+        return;
       }
-    }
-
-    function resetScore() {
-      if(confirm('⚠️ আপনার সব পয়েন্ট রিসেট হবে। নিশ্চিত? ⚠️')) {
-        currentPoints = 0;
-        updateScoreUI();
-        adStatusDiv.innerHTML = `🔄 স্কোর ০ করা হয়েছে। আবার অ্যাড দেখে পয়েন্ট জিতুন! 🔄`;
-        setTimeout(() => adStatusDiv.innerHTML = `✨ Start → অ্যাড দেখুন → পয়েন্ট নিন ✨`, 2000);
+      
+      // real ad sequence
+      const { richSuccess, playableSuccess } = await showBothAds();
+      
+      if (richSuccess || playableSuccess) {
+        // যদি অন্তত একটি অ্যাড সফল হয় তাহলে পয়েন্ট দিন
+        currentPoints += 1;
+        updatePointsUI();
+        showFloatingPlus();
+        addLog(`🎁 রিওয়ার্ড দেওয়া হলো! মোট পয়েন্ট ${currentPoints}`);
+        adStatusSpan.innerHTML = '🎉 অ্যাড দেখা হয়েছে! +1 পয়েন্ট পেলেন';
+      } else {
+        // কোন অ্যাড ই কাজ করল না — তবুও পয়েন্ট না দেওয়াই ভাল, তবে ইউজারকে জানান
+        addLog('❌ দুটো অ্যাডই দেখাতে ব্যর্থ, পয়েন্ট দেওয়া হয়নি', true);
+        adStatusSpan.innerHTML = '❌ অ্যাড লোড হয়নি। নেটওয়ার্ক বা কনফিগ চেক করুন।';
       }
+    } catch (err) {
+      addLog(`🔥 ক্রিটিক্যাল এরর: ${err.message}`, true);
+      adStatusSpan.innerHTML = '⚠️ অ্যাড সিস্টেমে সমস্যা, পরে চেষ্টা করুন';
+    } finally {
+      isAdRunning = false;
+      startBtn.disabled = false;
+      startBtn.style.opacity = '1';
+      setTimeout(() => {
+        if (adStatusSpan.innerHTML.includes('পয়েন্ট')) {
+          adStatusSpan.innerHTML = '✅ প্রস্তুত। Start চাপুন অ্যাড দেখতে';
+        }
+      }, 2500);
     }
+  }
 
-    startBtn.addEventListener('click', handleStart);
-    resetBtn.addEventListener('click', resetScore);
-    if(window.Telegram && Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
-    console.log("Ads Controller ready with pubId 1008310");
-  </script>
+  function resetPoints() {
+    if (confirm('পয়েন্ট রিসেট করবেন? ০ হয়ে যাবে')) {
+      currentPoints = 0;
+      updatePointsUI();
+      addLog('🔁 পয়েন্ট রিসেট করা হয়েছে');
+      adStatusSpan.innerHTML = '🔄 রিসেট হয়েছে। আবার Start করুন';
+    }
+  }
+
+  // initialize
+  inspectController();
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+    addLog('📱 টেলিগ্রাম ওয়েব অ্যাপ রেডি');
+  } else {
+    addLog('⚠️ টেলিগ্রাম ওয়েব অ্যাপ ডিটেক্ট হয়নি (ব্রাউজারে খুলেছেন?)', true);
+  }
+
+  startBtn.addEventListener('click', onStartClick);
+  resetBtn.addEventListener('click', resetPoints);
+  updatePointsUI();
+</script>
 </body>
 </html>
