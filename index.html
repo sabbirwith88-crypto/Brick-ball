@@ -2,61 +2,109 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Telegram Mini App Ads</title>
+  <title>Earn App</title>
 
-  <!-- Telegram Web App -->
+  <!-- Telegram -->
   <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 
-  <!-- RichAds Script -->
+  <!-- RichAds -->
   <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #0f172a;
+      color: white;
+      margin-top: 100px;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 300px;
+      margin: auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    button {
+      background: #22c55e;
+      border: none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+      font-size: 16px;
+      color: white;
+      margin-top: 15px;
+    }
+
+    button:active {
+      background: #16a34a;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+  </style>
 </head>
 
 <body>
 
-  <h2>Play & Earn</h2>
+  <div class="box">
+    <h2>🎮 Play & Earn</h2>
+    <p>Watch ad and earn coins</p>
 
-  <!-- Button -->
-  <button onclick="showRewardAd()">🎮 Play Game (Watch Ad)</button>
+    <button onclick="showAd()">▶ Play Ad</button>
+
+    <div id="status">Status: Ready</div>
+  </div>
 
   <script>
-    // Init Ads
-    window.TelegramAdsController = new TelegramAdsController();
-    window.TelegramAdsController.initialize({
-      pubId: "1008310",
-      appId: "7019",
-    });
+    const statusText = document.getElementById("status");
 
-    // Rewarded Ad Function
-    function showRewardAd() {
+    // Init Ads
+    try {
+      window.TelegramAdsController = new TelegramAdsController();
+      window.TelegramAdsController.initialize({
+        pubId: "1008310",
+        appId: "7019",
+      });
+      statusText.innerText = "Status: Ads Initialized ✅";
+    } catch (e) {
+      statusText.innerText = "Init Error ❌";
+      console.log(e);
+    }
+
+    function showAd() {
+      statusText.innerText = "Loading Ad...";
+
+      if (!window.TelegramAdsController) {
+        alert("Ads not loaded properly!");
+        return;
+      }
+
       window.TelegramAdsController.showAd({
         format: 'rewarded',
 
         onOpen: () => {
-          console.log("Ad Started");
+          statusText.innerText = "Ad Started ▶";
         },
 
         onClose: () => {
-          console.log("Ad Closed");
-          rewardUser();
+          statusText.innerText = "Ad Finished ✅ Reward Added";
+          alert("You got reward!");
         },
 
         onError: (err) => {
-          console.log("Ad Error:", err);
-          alert("Ad not available এখন");
+          statusText.innerText = "No Ads Available ❌";
+          console.log(err);
+          alert("Ad nai ekhon 😢");
         }
       });
-    }
-
-    // Reward System
-    function rewardUser() {
-      alert("✅ You earned reward!");
-
-      // Example: coin add
-      let coins = localStorage.getItem("coins") || 0;
-      coins = parseInt(coins) + 10;
-      localStorage.setItem("coins", coins);
-
-      console.log("Total Coins:", coins);
     }
   </script>
 
