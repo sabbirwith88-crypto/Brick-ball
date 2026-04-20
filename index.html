@@ -1,112 +1,938 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Earn App</title>
-
-  <!-- Telegram -->
-  <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
-
-  <!-- RichAds -->
-  <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      background: #0f172a;
-      color: white;
-      margin-top: 100px;
-    }
-
-    .box {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 300px;
-      margin: auto;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-
-    button {
-      background: #22c55e;
-      border: none;
-      padding: 15px;
-      width: 100%;
-      border-radius: 10px;
-      font-size: 16px;
-      color: white;
-      margin-top: 15px;
-    }
-
-    button:active {
-      background: #16a34a;
-    }
-
-    #status {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #94a3b8;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="box">
-    <h2>🎮 Play & Earn</h2>
-    <p>Watch ad and earn coins</p>
-
-    <button onclick="showAd()">▶ Play Ad</button>
-
-    <div id="status">Status: Ready</div>
-  </div>
-
-  <script>
-    const statusText = document.getElementById("status");
-
-    // Init Ads
-    try {
-      window.TelegramAdsController = new TelegramAdsController();
-      window.TelegramAdsController.initialize({
-        pubId: "1008310",
-        appId: "7019",
-      });
-      statusText.innerText = "Status: Ads Initialized ✅";
-    } catch (e) {
-      statusText.innerText = "Init Error ❌";
-      console.log(e);
-    }
-
-    function showAd() {
-      statusText.innerText = "Loading Ad...";
-
-      if (!window.TelegramAdsController) {
-        alert("Ads not loaded properly!");
-        return;
-      }
-
-      window.TelegramAdsController.showAd({
-        format: 'rewarded',
-
-        onOpen: () => {
-          statusText.innerText = "Ad Started ▶";
-        },
-
-        onClose: () => {
-          statusText.innerText = "Ad Finished ✅ Reward Added";
-          alert("You got reward!");
-        },
-
-        onError: (err) => {
-          statusText.innerText = "No Ads Available ❌";
-          console.log(err);
-          alert("Ad nai ekhon 😢");
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Brick Ball — Triple Ads + Auto-Fallback | Stable & Fast</title>
+    <!-- Adsgram SDK (blockId: int-25869) -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <!-- Monetag SDK (zone: 10866085) -->
+    <script src="//libtl.com/sdk.js" data-zone="10866085" data-sdk="show_10866085"></script>
+    <!-- Giga Pub SDK (new ad network) -->
+    <script src="https://ad.gigapub.tech/script?id=6334"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
         }
-      });
-    }
-  </script>
 
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #2c1a0e, #0f0804);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(45deg, rgba(200, 80, 40, 0.15) 0px, rgba(200, 80, 40, 0.15) 60px, rgba(230, 110, 50, 0.1) 60px, rgba(230, 110, 50, 0.1) 120px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 520px;
+            background: linear-gradient(145deg, #c47a44, #9b4a28);
+            border-radius: 48px;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,215,140,0.6);
+            overflow: hidden;
+            border: 3px solid #ffcf7a;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.2s ease;
+        }
+
+        .brick-header {
+            background: repeating-linear-gradient(135deg, #bd4a24, #bd4a24 40px, #e06e3a 40px, #e06e3a 80px);
+            padding: 14px 10px;
+            text-align: center;
+            border-bottom: 4px solid #ffcd7a;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff0b5, #ffd966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 3px 3px 0 #6b2e12;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ball-animation {
+            display: inline-block;
+            animation: bounceBall 1s infinite ease;
+        }
+
+        @keyframes bounceBall {
+            0%,100%{ transform: translateY(0px) rotate(0deg);}
+            50%{ transform: translateY(-6px) rotate(10deg);}
+        }
+
+        .subtitle {
+            font-size: 10px;
+            background: #2b170cba;
+            backdrop-filter: blur(6px);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 60px;
+            color: #ffeaac;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .badge-pattern {
+            background: #2f1a0c;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 9px;
+            margin-top: 6px;
+            color: #ffcf7a;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .level-list {
+            max-height: 460px;
+            overflow-y: auto;
+            padding: 12px;
+            background: rgba(30, 16, 6, 0.8);
+            scrollbar-width: thin;
+        }
+
+        .level-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .level-list::-webkit-scrollbar-track { background: #7a3a1c; border-radius: 10px; }
+        .level-list::-webkit-scrollbar-thumb { background: #ffbc6e; border-radius: 10px; }
+
+        .level-card {
+            background: linear-gradient(105deg, #6e351b, #4f2410);
+            margin-bottom: 12px;
+            border-radius: 28px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 6px solid #ffbc6e;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+        .level-card:active { transform: scale(0.97); background: #814020; }
+        .level-card.locked { opacity: 0.55; border-left-color: #7a5a44; pointer-events: none; filter: grayscale(0.2);}
+
+        .level-number {
+            font-size: 24px;
+            font-weight: 800;
+            background: #ffbc6e;
+            color: #3a1c0a;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: inset 0 -2px 0 #b1622a, 0 4px 8px black;
+        }
+
+        .level-info { flex: 1; padding-left: 12px; }
+        .level-name { font-size: 15px; font-weight: 800; color: #ffefc0; }
+        .level-requirement { font-size: 9px; color: #ffcd8a; margin-top: 2px; }
+
+        .game-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 10, 3, 0.97);
+            backdrop-filter: blur(18px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: fadeSlide 0.25s ease;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: scale(0.96); backdrop-filter: blur(0);}
+            to { opacity: 1; transform: scale(1); backdrop-filter: blur(18px);}
+        }
+
+        .game-card {
+            background: radial-gradient(ellipse at 30% 20%, #d47e44, #893d1c);
+            border-radius: 56px;
+            padding: 24px 16px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            border: 3px solid #ffdfa5;
+            box-shadow: 0 25px 35px black;
+        }
+
+        .game-level-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff0b5;
+            text-shadow: 2px 2px 0 #652d10;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        @media (min-width: 450px) {
+            .brick-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .brick {
+            background: linear-gradient(145deg, #c2582c, #9b3a1a);
+            border-radius: 20px;
+            padding: 14px 4px;
+            text-align: center;
+            font-weight: 800;
+            color: #fff0ce;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.05s linear;
+            box-shadow: 0 6px 0 #55280e;
+            position: relative;
+            overflow: hidden;
+        }
+        .brick:active { transform: translateY(3px); box-shadow: 0 2px 0 #55280e; }
+        .brick.broken {
+            background: #4a3224;
+            box-shadow: none;
+            transform: translateY(4px);
+            filter: grayscale(0.6);
+            cursor: default;
+            pointer-events: none;
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .ball-hit-effect {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: radial-gradient(circle, #ffcf4a, #ff8c1a);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: hitPop 0.3s ease-out forwards;
+            z-index: 200;
+        }
+        @keyframes hitPop {
+            0% { transform: scale(0.2); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        .progress-bar {
+            background: #2b180c;
+            border-radius: 60px;
+            padding: 3px;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #ffbc6e, #ff9626);
+            height: 10px;
+            border-radius: 60px;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
+        .combo-streak {
+            background: #1f1107;
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            color: #ffcd7a;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.96);
+            backdrop-filter: blur(20px);
+            z-index: 11000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .countdown-number {
+            font-size: 100px;
+            background: linear-gradient(45deg, #ffbc6e, #ff8c1a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            animation: pulseScale 0.4s ease-out;
+            text-shadow: 0 0 20px rgba(255,140,26,0.5);
+        }
+        @keyframes pulseScale {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .countdown-message {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffcf7a;
+            margin-top: 20px;
+            text-shadow: 0 2px 4px black;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 20px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        .countdown-progress-ring {
+            width: 120px;
+            height: 120px;
+            margin-top: 20px;
+        }
+        .levelcomplete-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #e07a2e, #55280e);
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .complete-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff0b5;
+            text-shadow: 3px 3px 0 #5a2a10;
+        }
+        .reward-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #f5bc70, #d97a2a);
+            z-index: 9500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .reward-code {
+            background: rgba(0,0,0,0.85);
+            padding: 14px 24px;
+            border-radius: 48px;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #ffbc6e;
+            margin: 20px;
+            cursor: pointer;
+            border: 2px solid gold;
+        }
+        .btn {
+            background: linear-gradient(45deg, #ffbc6e, #f5922a);
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 60px;
+            cursor: pointer;
+            margin: 6px;
+            transition: 0.08s linear;
+            box-shadow: 0 4px 0 #9b4a1a;
+        }
+        .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #9b4a1a; }
+        .footer-note {
+            text-align: center;
+            padding: 10px;
+            background: #1f1107;
+            color: #ffcf9a;
+            font-size: 9px;
+            font-weight: 600;
+        }
+        .ad-sequence-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.98);
+            backdrop-filter: blur(30px);
+            z-index: 12000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .ad-sequence-card {
+            background: #35200f;
+            border-radius: 56px;
+            padding: 28px 20px;
+            max-width: 320px;
+            width: 85%;
+            text-align: center;
+            border: 3px solid #ffbc6e;
+        }
+        .fallback-manual-btn {
+            background: #6b3a1e;
+            border: none;
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 60px;
+            margin-top: 12px;
+            color: #ffcf7a;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .offline-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 16px;
+            right: 16px;
+            background: #b33a22;
+            color: white;
+            padding: 12px;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: bold;
+            z-index: 20000;
+            box-shadow: 0 6px 15px black;
+            animation: slideUp 0.25s;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .game-close-btn {
+            background: #2c1a10;
+            color: #ffcf8a;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 60px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 14px;
+            cursor: pointer;
+        }
+        .ad-loading-text {
+            color: #ffbc6e;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="brick-header">
+        <div class="title"><span>🧱</span><span>BRICK BALL</span><span class="ball-animation">🏀</span></div>
+        <div class="subtitle">⚡ TRIPLE ADS (Auto-continue) + FALLBACK: if ad fails → fallback link → auto-resume ⚡</div>
+        <div class="badge-pattern">🎯 EACH LEVEL: Adsgram → Monetag → GigaPub (30s timeout + manual fallback option)</div>
+    </div>
+    <div class="level-list" id="levelListContainer"></div>
+    <div class="footer-note">💥 Tap bricks! Ad sequence runs automatically. If any ad fails, fallback opens, return = auto next step.</div>
+</div>
+
+<!-- Game Panel -->
+<div id="gamePanel" class="game-panel" style="display: none;">
+    <div class="game-card">
+        <div class="game-level-title"><span>🏀</span> <span id="gameLevelTitle">BRICK SET 1</span> <span>🧱</span></div>
+        <div class="combo-streak" id="comboStreakDisplay">🔥 STREAK 0</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="game-progress" id="gameProgressText" style="font-weight: bold; margin: 8px 0;">0 / 5 smashed</div>
+        <div class="brick-grid" id="bricksGrid"></div>
+        <div class="complete-status" id="completeStatusMsg">✨ Tap any brick to smash! ✨</div>
+        <button class="game-close-btn" id="exitGameBtn">🏠 Back to Hall</button>
+    </div>
+</div>
+
+<!-- Countdown Overlay -->
+<div id="countdownOverlay" class="countdown-overlay" style="display: none;">
+    <div class="countdown-number" id="countdownNum">3</div>
+    <div class="countdown-message" id="countdownMsg">Next Brick Set starting...</div>
+    <div class="countdown-progress-ring"><svg width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="#ffbc6e" stroke-width="6" stroke-dasharray="283" stroke-dashoffset="0" id="countdownCircle"/></svg></div>
+</div>
+
+<!-- Level Complete Screen -->
+<div id="levelCompleteScreen" class="levelcomplete-screen" style="display: none;">
+    <div class="complete-title">🏆 BRICK BALL CLEAR! 🏆</div>
+    <div style="color: #ffefb0; font-size: 18px; margin: 16px;" id="completeLevelMsg"></div>
+    <button class="btn" id="nextLevelBtnFromComplete">➡️ NEXT BRICK SET</button>
+    <button class="btn" id="backToRoadCompleteBtn">🏠 MAIN MENU</button>
+</div>
+
+<!-- Reward Screen -->
+<div id="rewardScreen" class="reward-screen" style="display: none;">
+    <h2 style="font-size: 38px; color:#2b180a;">🏅 MASTER SMASHER 🏅</h2>
+    <p style="color: white; font-size: 18px;">You crushed all 10 brick sets!</p>
+    <p style="color: #ffefb0; margin-top: 12px;">🎁 Your reward code:</p>
+    <div class="reward-code" id="rewardCodeDisplay" onclick="copyRewardCodeGlobal()">BALL10-XXXXXX</div>
+    <p style="font-size: 11px;">👇 tap to copy 👇</p>
+    <button class="btn" id="resetAllBtn">📋 COPY & RESET GAME</button>
+</div>
+
+<!-- Ad Sequence Panel (Auto mode, no next-step button, but manual fallback) -->
+<div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
+    <div class="ad-sequence-card">
+        <div class="ad-step-icon" style="font-size: 48px;" id="adStepIcon">🎬</div>
+        <div class="ad-step-message" style="font-size: 20px; font-weight: bold; color:#ffcf7a;" id="adStepMessage">Loading ad...</div>
+        <div class="ad-description" style="margin: 8px 0;" id="adDescription">Please wait, ad is loading...</div>
+        <div id="adLoadingIndicator" class="ad-loading-text">⏳ Processing ad...</div>
+        <button id="manualFallbackBtn" class="fallback-manual-btn">⚠️ Ad stuck? Use Fallback</button>
+    </div>
+</div>
+
+<script>
+    // ---------- FALLBACK CONFIGURATION ----------
+    const FALLBACK_AD_URL = "https://install-the-app-form-this-link.vercel.app";
+    const AD_TIMEOUT_MS = 30000; // 30 seconds generous timeout to avoid "time not seen" error
+    
+    // ---------- GAME STATE ----------
+    const MAX_LEVEL = 10;
+    let currentUnlockedLevel = 1;
+    let activeGameLevel = null;
+    let bricksBroken = [];
+    let gameCompletedFlag = false;
+    let isProcessing = false;
+    let adSequenceActive = false;
+    let currentStreak = 0;
+    let adController = null;
+    let adInitialized = false;
+    
+    // pending fallback resolver
+    let pendingFallbackResolver = null;
+    let visibilityListenerActive = false;
+    
+    // ---------- PROGRESS MANAGEMENT ----------
+    function loadProgress() {
+        try {
+            const saved = localStorage.getItem('brickBallPro');
+            if(saved) { const data = JSON.parse(saved); currentUnlockedLevel = Math.min(MAX_LEVEL, data.unlockedLevel || 1); }
+            else currentUnlockedLevel = 1;
+        } catch(e) { currentUnlockedLevel = 1; }
+    }
+    function saveProgress() { localStorage.setItem('brickBallPro', JSON.stringify({ unlockedLevel: currentUnlockedLevel })); }
+    
+    function isNetworkOnline() { return navigator.onLine; }
+    function showOfflineExitAndCloseGame(msg = "📡 No internet. Returning to menu.") {
+        const toast = document.createElement('div'); toast.className = 'offline-toast'; toast.innerText = msg;
+        document.body.appendChild(toast); setTimeout(() => toast.remove(), 3500);
+        forceExitAllGameScreens();
+    }
+    function forceExitAllGameScreens() {
+        document.getElementById('gamePanel').style.display = 'none';
+        document.getElementById('adSequencePanel').style.display = 'none';
+        document.getElementById('countdownOverlay').style.display = 'none';
+        document.getElementById('levelCompleteScreen').style.display = 'none';
+        document.getElementById('rewardScreen').style.display = 'none';
+        if(pendingFallbackResolver) { pendingFallbackResolver(); pendingFallbackResolver = null; }
+        adSequenceActive = false; isProcessing = false; gameCompletedFlag = false; activeGameLevel = null;
+        removeVisibilityListener();
+    }
+    
+    // visibility listener for fallback return (auto-resume)
+    function onVisibilityChange() {
+        if(document.visibilityState === 'visible' && pendingFallbackResolver) {
+            const resolver = pendingFallbackResolver;
+            pendingFallbackResolver = null;
+            removeVisibilityListener();
+            resolver();
+        }
+    }
+    function addVisibilityListener() {
+        if(!visibilityListenerActive) {
+            document.addEventListener('visibilitychange', onVisibilityChange);
+            visibilityListenerActive = true;
+        }
+    }
+    function removeVisibilityListener() {
+        if(visibilityListenerActive) {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+            visibilityListenerActive = false;
+        }
+    }
+    
+    // Core: show ad with improved timeout and fallback (auto + manual)
+    async function showAdWithFallback(adPromiseFactory, networkName, stepDesc) {
+        if(!isNetworkOnline()) throw new Error("offline");
+        
+        let timeoutId;
+        const timeoutPromise = new Promise((_, reject) => {
+            timeoutId = setTimeout(() => reject(new Error(`Timeout (${networkName}) after ${AD_TIMEOUT_MS/1000}s`)), AD_TIMEOUT_MS);
+        });
+        
+        let adPromise;
+        try {
+            adPromise = adPromiseFactory();
+        } catch(e) {
+            clearTimeout(timeoutId);
+            return await triggerFallbackAndWait(networkName, stepDesc);
+        }
+        
+        try {
+            const result = await Promise.race([adPromise, timeoutPromise]);
+            clearTimeout(timeoutId);
+            return result;
+        } catch(err) {
+            clearTimeout(timeoutId);
+            console.warn(`Ad ${networkName} failed/timeout:`, err);
+            return await triggerFallbackAndWait(networkName, stepDesc);
+        }
+    }
+    
+    async function triggerFallbackAndWait(networkName, stepDesc) {
+        const adStepMsgElem = document.getElementById('adStepMessage');
+        const adDescElem = document.getElementById('adDescription');
+        if(adStepMsgElem && adDescElem) {
+            adStepMsgElem.innerText = `⚠️ ${networkName} ad not loaded. Opening fallback...`;
+            adDescElem.innerText = `Complete the fallback page, then return here. Auto-continue.`;
+        }
+        window.open(FALLBACK_AD_URL, '_blank');
+        addVisibilityListener();
+        return new Promise((resolve) => {
+            pendingFallbackResolver = () => {
+                if(adStepMsgElem && adDescElem) {
+                    adStepMsgElem.innerText = `✅ ${networkName} step completed (fallback)`;
+                    adDescElem.innerText = `Moving to next ad automatically...`;
+                }
+                resolve();
+            };
+        });
+    }
+    
+    // ----- individual ad functions with robust checking -----
+    async function showAdsgramAd() {
+        if(!adInitialized || !adController) {
+            console.warn("Adsgram not ready, using fallback");
+            await triggerFallbackAndWait("Adsgram", "Adsgram unavailable");
+            return;
+        }
+        await showAdWithFallback(async () => {
+            return await adController.show();
+        }, "Adsgram", "Step 1/3");
+    }
+    
+    async function showMonetagAd() {
+        // Wait for monetag SDK
+        let attempts = 0;
+        while(typeof window.show_10866085 !== 'function' && attempts < 25) {
+            await new Promise(r => setTimeout(r, 150));
+            attempts++;
+        }
+        if(typeof window.show_10866085 !== 'function') {
+            console.warn("Monetag not ready, using fallback");
+            await triggerFallbackAndWait("Monetag", "Monetag SDK missing");
+            return;
+        }
+        await showAdWithFallback(async () => {
+            const result = window.show_10866085();
+            // If result is not a promise, wrap into a resolved promise after short delay
+            if(result && typeof result.then === 'function') return result;
+            return new Promise(resolve => setTimeout(resolve, 800));
+        }, "Monetag", "Step 2/3");
+    }
+    
+    async function showGigaAd() {
+        let attempts = 0;
+        while(typeof window.showGiga !== 'function' && attempts < 30) {
+            await new Promise(r => setTimeout(r, 100));
+            attempts++;
+        }
+        if(typeof window.showGiga !== 'function') {
+            console.warn("GigaPub SDK unavailable, using fallback");
+            await triggerFallbackAndWait("GigaPub", "GigaPub unavailable");
+            return;
+        }
+        await showAdWithFallback(async () => {
+            const result = window.showGiga();
+            if(result && typeof result.then === 'function') return result;
+            return new Promise(resolve => setTimeout(resolve, 800));
+        }, "GigaPub", "Step 3/3");
+    }
+    
+    // ----- Adsgram init -----
+    function initAdsgram() { 
+        try { 
+            if(window.Adsgram) { 
+                adController = window.Adsgram.init({ blockId: "int-25869" }); 
+                adInitialized = true; 
+            } 
+        } catch(e) { console.warn("Adsgram init warn"); } 
+    }
+    
+    // UI helpers for ad sequence (auto mode, no next-step)
+    const adSeqPanel = document.getElementById('adSequencePanel');
+    const adStepMsg = document.getElementById('adStepMessage');
+    const adDesc = document.getElementById('adDescription');
+    const adLoadingIndicator = document.getElementById('adLoadingIndicator');
+    const adStepIcon = document.getElementById('adStepIcon');
+    const manualFallbackBtn = document.getElementById('manualFallbackBtn');
+    
+    let currentManualResolver = null;
+    
+    function showAdUI(step, desc, icon = "🎬", loadingText = "⏳ Processing ad...") {
+        adStepMsg.innerText = step;
+        adDesc.innerText = desc;
+        adStepIcon.innerText = icon;
+        adLoadingIndicator.innerText = loadingText;
+        adSeqPanel.style.display = 'flex';
+    }
+    function hideAdUI() { 
+        adSeqPanel.style.display = 'none'; 
+        if(currentManualResolver) { currentManualResolver(); currentManualResolver = null; }
+    }
+    
+    // FULL AD SEQUENCE with auto-continue, no extra clicks
+    async function runFullAdSequence(level) {
+        if(!isNetworkOnline()) throw new Error("offline");
+        
+        // STEP 1: Adsgram
+        showAdUI("🎬 STEP 1/3", "Loading Adsgram ad... (fallback ready)", "📺", "Please wait, ad loading...");
+        await showAdsgramAd();
+        if(!isNetworkOnline()) throw new Error("offline");
+        showAdUI("✅ STEP 1 done", "Adsgram completed. Auto proceeding to Monetag...", "👍", "Moving to next ad...");
+        await new Promise(r => setTimeout(r, 800));
+        
+        // STEP 2: Monetag
+        showAdUI("💰 STEP 2/3", "Monetag ad - loading (fallback ready)", "📢", "Fetching monetization...");
+        await showMonetagAd();
+        if(!isNetworkOnline()) throw new Error("offline");
+        showAdUI("✅ STEP 2 done", "Monetag completed. Auto proceeding to GigaPub...", "⭐", "Finalizing...");
+        await new Promise(r => setTimeout(r, 800));
+        
+        // STEP 3: GigaPub
+        showAdUI("⚡ STEP 3/3", "Giga Pub ad — final step (fallback ready)", "🎮", "Loading last ad...");
+        await showGigaAd();
+        
+        // All done
+        hideAdUI();
+        await new Promise(r => setTimeout(r, 400));
+    }
+    
+    // Manual fallback handler inside ad panel
+    function setupManualFallback() {
+        manualFallbackBtn.onclick = () => {
+            if(pendingFallbackResolver) {
+                // already in fallback mode, just open again
+                window.open(FALLBACK_AD_URL, '_blank');
+            } else {
+                // force fallback for current step
+                if(adSeqPanel.style.display === 'flex') {
+                    const currentMsg = adStepMsg.innerText;
+                    const net = currentMsg.includes("Adsgram") ? "Adsgram" : (currentMsg.includes("Monetag") ? "Monetag" : "GigaPub");
+                    triggerFallbackAndWait(net, "Manual fallback").then(() => {
+                        if(pendingFallbackResolver) {
+                            const temp = pendingFallbackResolver;
+                            pendingFallbackResolver = null;
+                            temp();
+                        }
+                    });
+                }
+            }
+        };
+    }
+    
+    // Ball smash effect
+    function createBallHitEffect(x, y) {
+        const effect = document.createElement('div'); effect.className = 'ball-hit-effect';
+        effect.style.left = x + 'px'; effect.style.top = y + 'px';
+        effect.style.position = 'fixed'; effect.style.zIndex = '20000';
+        document.body.appendChild(effect);
+        setTimeout(() => effect.remove(), 300);
+    }
+    
+    // Start level after full ad sequence
+    async function startLevelEntry(level) {
+        if(adSequenceActive || isProcessing) return false;
+        if(!isNetworkOnline()) { showOfflineExitAndCloseGame("Internet required."); return false; }
+        adSequenceActive = true; isProcessing = true;
+        document.getElementById('gamePanel').style.display = 'none';
+        try {
+            await runFullAdSequence(level);
+            if(!isNetworkOnline()) throw new Error("offline");
+            activeGameLevel = level;
+            bricksBroken = [false, false, false, false, false];
+            gameCompletedFlag = false;
+            currentStreak = 0;
+            renderGameUI(level);
+            document.getElementById('gamePanel').style.display = 'flex';
+            adSequenceActive = false; isProcessing = false;
+            return true;
+        } catch(err) { 
+            hideAdUI(); adSequenceActive = false; isProcessing = false; 
+            showOfflineExitAndCloseGame("Ad sequence failed. Return to menu."); 
+            return false; 
+        }
+    }
+    
+    const brickNames = ["🧱 CORNER", "🏛️ WALL", "💎 CORE", "⚡ FLANK", "🏆 TOP"];
+    function renderGameUI(level) {
+        document.getElementById('gameLevelTitle').innerHTML = `🧱 BRICK SET ${level} 🏀`;
+        const brokenCount = bricksBroken.filter(v=>v).length;
+        const percent = (brokenCount/5)*100;
+        document.getElementById('progressFill').style.width = percent+'%';
+        document.getElementById('gameProgressText').innerHTML = `💥 ${brokenCount} / 5 smashed | 🏀 ${currentStreak} streak`;
+        document.getElementById('comboStreakDisplay').innerHTML = currentStreak > 0 ? `🔥 STREAK ${currentStreak} 🔥` : `⚡ STREAK 0`;
+        const grid = document.getElementById('bricksGrid'); grid.innerHTML = '';
+        for(let i=0;i<5;i++) {
+            const brickDiv = document.createElement('div'); brickDiv.className = 'brick';
+            if(bricksBroken[i]) { brickDiv.classList.add('broken'); brickDiv.innerHTML = `💀<br><span style="font-size:10px;">SMASHED</span>`; brickDiv.style.pointerEvents = 'none'; }
+            else {
+                brickDiv.innerHTML = `<span style="font-size:24px;">🧱</span><br>${brickNames[i]}`;
+                brickDiv.onclick = (e) => { if(gameCompletedFlag || bricksBroken[i]) return; smashBrick(i, e); };
+            }
+            grid.appendChild(brickDiv);
+        }
+        const remaining = 5 - brokenCount;
+        document.getElementById('completeStatusMsg').innerHTML = remaining===0 ? "🎉 ALL BRICKS SHATTERED! LEVEL CLEAR! 🎉" : `💢 ${remaining} brick${remaining!==1?'s':''} remaining — tap to smash!`;
+    }
+    
+    function smashBrick(index, event) {
+        if(gameCompletedFlag || bricksBroken[index]) return;
+        const rect = event.target.getBoundingClientRect();
+        const centerX = rect.left + rect.width/2, centerY = rect.top + rect.height/2;
+        createBallHitEffect(centerX, centerY);
+        bricksBroken[index] = true;
+        currentStreak++;
+        renderGameUI(activeGameLevel);
+        if(bricksBroken.every(v=>v===true) && !gameCompletedFlag) {
+            gameCompletedFlag = true;
+            handleLevelCompletion(activeGameLevel);
+        }
+    }
+    
+    async function handleLevelCompletion(level) {
+        if(isProcessing) return;
+        isProcessing = true;
+        document.getElementById('gamePanel').style.display = 'none';
+        if(level === currentUnlockedLevel && level < MAX_LEVEL) { currentUnlockedLevel = level+1; saveProgress(); buildLevelList(); }
+        else if(level > currentUnlockedLevel && level <= MAX_LEVEL) { currentUnlockedLevel = level; saveProgress(); buildLevelList(); }
+        if(level === MAX_LEVEL) { showRewardScreen(); isProcessing = false; }
+        else { showLevelComplete(level); isProcessing = false; }
+    }
+    
+    function showLevelComplete(level) {
+        const completeDiv = document.getElementById('levelCompleteScreen');
+        document.getElementById('completeLevelMsg').innerHTML = `✨ BRICK SET ${level} DESTROYED! ✨`;
+        completeDiv.dataset.currentLevel = level;
+        completeDiv.style.display = 'flex';
+    }
+    
+    function showCountdown(seconds, msgPrefix) {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('countdownOverlay');
+            const countdownNum = document.getElementById('countdownNum');
+            const msgSpan = document.getElementById('countdownMsg');
+            const circle = document.getElementById('countdownCircle');
+            msgSpan.innerHTML = msgPrefix || "Next Brick Set in...";
+            overlay.style.display = 'flex';
+            let remain = seconds;
+            countdownNum.textContent = remain;
+            const circumference = 2 * Math.PI * 45;
+            if(circle) circle.style.strokeDasharray = circumference;
+            const interval = setInterval(() => {
+                if(!isNetworkOnline()) { clearInterval(interval); overlay.style.display='none'; showOfflineExitAndCloseGame("Network lost."); resolve(); return; }
+                remain--;
+                if(remain >= 1) {
+                    countdownNum.textContent = remain;
+                    if(circle) {
+                        const offset = circumference * (remain / seconds);
+                        circle.style.strokeDashoffset = offset;
+                    }
+                } else {
+                    clearInterval(interval); overlay.style.display='none'; resolve();
+                }
+            }, 1000);
+        });
+    }
+    
+    async function handleNextLevel(countCompletedLevel) {
+        if(isProcessing) return;
+        const nextLvl = countCompletedLevel + 1;
+        if(nextLvl > MAX_LEVEL) { document.getElementById('levelCompleteScreen').style.display = 'none'; showRewardScreen(); return; }
+        document.getElementById('levelCompleteScreen').style.display = 'none';
+        isProcessing = true;
+        await showCountdown(3, `🔥 NEXT: BRICK SET ${nextLvl}<br>Prepare to smash!`);
+        if(!isNetworkOnline()) { showOfflineExitAndCloseGame("Network lost before next level."); isProcessing = false; return; }
+        const success = await startLevelEntry(nextLvl);
+        isProcessing = false;
+        if(!success) forceExitAllGameScreens();
+    }
+    
+    function showRewardScreen() {
+        const code = `BALL10-${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
+        document.getElementById('rewardCodeDisplay').textContent = code;
+        document.getElementById('rewardScreen').style.display = 'flex';
+    }
+    
+    function resetGameAndCopy() {
+        const code = document.getElementById('rewardCodeDisplay').textContent;
+        navigator.clipboard.writeText(code).catch(()=>{});
+        alert('🏆 Reward code copied! Progress reset to Level 1.');
+        currentUnlockedLevel = 1; saveProgress(); buildLevelList(); forceExitAllGameScreens();
+    }
+    window.copyRewardCodeGlobal = function() { const code = document.getElementById('rewardCodeDisplay').textContent; navigator.clipboard.writeText(code); alert('📋 Code copied: '+code); };
+    
+    function buildLevelList() {
+        const container = document.getElementById('levelListContainer'); container.innerHTML = '';
+        for(let i=1;i<=MAX_LEVEL;i++) {
+            const unlocked = i <= currentUnlockedLevel;
+            const card = document.createElement('div'); card.className = 'level-card' + (unlocked ? '' : ' locked');
+            if(unlocked) card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntry(i); };
+            const adType = "🎬 → 💰 → 🎮 (auto-fallback)";
+            const statusIcon = unlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
+            card.innerHTML = `<div class="level-number">${i}</div><div class="level-info"><div class="level-name">🧱 Brick Set ${i} <span style="font-size:8px;">${adType}</span></div><div class="level-requirement">💥 5 bricks smash (30s timeout + fallback)</div></div><div class="level-status">${statusIcon}</div>`;
+            container.appendChild(card);
+        }
+    }
+    
+    function exitGame() { if(adSequenceActive) { hideAdUI(); adSequenceActive=false; } document.getElementById('gamePanel').style.display='none'; isProcessing=false; removeVisibilityListener(); }
+    function backToRoad() { document.getElementById('levelCompleteScreen').style.display='none'; isProcessing=false; }
+    
+    function bindEvents() {
+        document.getElementById('nextLevelBtnFromComplete').onclick = () => { const lvl = parseInt(document.getElementById('levelCompleteScreen').dataset.currentLevel); if(!isNaN(lvl)) handleNextLevel(lvl); };
+        document.getElementById('backToRoadCompleteBtn').onclick = backToRoad;
+        document.getElementById('resetAllBtn').onclick = resetGameAndCopy;
+        document.getElementById('exitGameBtn').onclick = exitGame;
+        setupManualFallback();
+    }
+    
+    window.addEventListener('load', () => { loadProgress(); initAdsgram(); buildLevelList(); bindEvents(); });
+    window.addEventListener('beforeunload', () => saveProgress());
+</script>
 </body>
 </html>
